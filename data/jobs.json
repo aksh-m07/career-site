@@ -1,0 +1,1094 @@
+[
+  {
+    "id": "eng-001",
+    "title": "Junior Frontend Developer",
+    "company": "Mosaic Labs",
+    "location": "San Francisco, CA",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "junior",
+    "salary": { "min": 80000, "max": 105000, "currency": "USD" },
+    "description": "Join our product team building delightful React interfaces for our B2B SaaS platform. You'll work alongside senior engineers shipping features used by 10,000+ daily active users.",
+    "responsibilities": [
+      "Build and maintain React components in our design system",
+      "Collaborate with product and design on new features",
+      "Write unit and integration tests using Jest and React Testing Library",
+      "Participate in code review and technical discussions"
+    ],
+    "requirements": [
+      "1-2 years of experience with React and TypeScript",
+      "Familiarity with REST APIs and async JavaScript",
+      "Basic understanding of CSS and responsive design",
+      "Strong communication skills and eagerness to learn"
+    ],
+    "tags": ["React", "TypeScript", "CSS", "Jest", "REST APIs"],
+    "postedAt": "2026-04-28",
+    "remote": true
+  },
+  {
+    "id": "eng-002",
+    "title": "Backend Engineer",
+    "company": "Stratum Systems",
+    "location": "Austin, TX",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "mid",
+    "salary": { "min": 120000, "max": 155000, "currency": "USD" },
+    "description": "Design and build scalable microservices powering our real-time logistics platform. Our backend handles 50M+ events per day across 12 services.",
+    "responsibilities": [
+      "Build and maintain Python/FastAPI microservices",
+      "Design database schemas in PostgreSQL and Redis",
+      "Write comprehensive tests and API documentation",
+      "Participate in on-call rotation and incident response"
+    ],
+    "requirements": [
+      "3-5 years of backend development experience",
+      "Proficiency in Python and at least one other backend language",
+      "Experience with PostgreSQL, Redis, and message queues (Kafka or RabbitMQ)",
+      "Understanding of REST and gRPC API design"
+    ],
+    "tags": ["Python", "FastAPI", "PostgreSQL", "Redis", "Kafka", "Docker"],
+    "postedAt": "2026-04-25",
+    "remote": false
+  },
+  {
+    "id": "eng-003",
+    "title": "Senior Machine Learning Engineer",
+    "company": "Helix AI",
+    "location": "New York, NY",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "senior",
+    "salary": { "min": 170000, "max": 220000, "currency": "USD" },
+    "description": "Lead ML system design for our personalization engine, which generates recommendations for 5M+ monthly users. You'll own the full lifecycle from research to production.",
+    "responsibilities": [
+      "Design and implement ML pipelines using PyTorch and Ray",
+      "Collaborate with researchers to productionize new models",
+      "Optimize inference latency and model serving infrastructure",
+      "Mentor junior engineers and contribute to team technical direction"
+    ],
+    "requirements": [
+      "5+ years of ML engineering experience with production deployments",
+      "Deep expertise in PyTorch or TensorFlow",
+      "Experience with feature stores, model registries, and A/B testing",
+      "Strong background in distributed systems and cloud infrastructure (AWS/GCP)"
+    ],
+    "tags": ["PyTorch", "Python", "AWS", "MLflow", "Ray", "Kubernetes", "Machine Learning"],
+    "postedAt": "2026-04-20",
+    "remote": true
+  },
+  {
+    "id": "eng-004",
+    "title": "Staff Platform Engineer",
+    "company": "Covalent Technologies",
+    "location": "Seattle, WA",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "staff",
+    "salary": { "min": 210000, "max": 270000, "currency": "USD" },
+    "description": "Define the internal developer platform strategy for an 800-person engineering org. You'll set the standard for how engineers build, deploy, and operate services at scale.",
+    "responsibilities": [
+      "Architect the internal developer platform across CI/CD, observability, and service mesh",
+      "Lead cross-team technical initiatives and drive consensus on standards",
+      "Build tooling that improves engineering velocity across the org",
+      "Partner with security and infrastructure teams on platform reliability"
+    ],
+    "requirements": [
+      "8+ years of engineering experience, with 3+ in platform or infrastructure roles",
+      "Deep expertise in Kubernetes, Terraform, and cloud-native tooling",
+      "Track record of leading org-wide technical initiatives",
+      "Strong communication skills; experience influencing without authority"
+    ],
+    "tags": ["Kubernetes", "Terraform", "AWS", "CI/CD", "Platform Engineering", "Go", "Python"],
+    "postedAt": "2026-04-15",
+    "remote": true
+  },
+  {
+    "id": "eng-005",
+    "title": "Principal Software Architect",
+    "company": "Apex Financial Group",
+    "location": "Chicago, IL",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "principal",
+    "salary": { "min": 250000, "max": 320000, "currency": "USD" },
+    "description": "Drive the technical vision for our next-generation trading platform, processing $2B+ in daily transactions. You will set architectural direction across 6 engineering teams.",
+    "responsibilities": [
+      "Define system architecture for high-availability, low-latency financial systems",
+      "Evaluate and adopt emerging technologies across the engineering organization",
+      "Lead architecture review boards and set technical standards",
+      "Partner with executive leadership on multi-year technology roadmap"
+    ],
+    "requirements": [
+      "12+ years of software engineering, with 5+ in architecture roles",
+      "Deep expertise in distributed systems, event-driven architectures, and financial systems",
+      "Proven track record of architecting systems at scale (>1M TPS)",
+      "Excellent communication and executive stakeholder management skills"
+    ],
+    "tags": ["Java", "Kafka", "AWS", "Distributed Systems", "System Design", "Low Latency"],
+    "postedAt": "2026-04-10",
+    "remote": false
+  },
+  {
+    "id": "eng-006",
+    "title": "VP of Engineering",
+    "company": "Meridian Health",
+    "location": "Boston, MA",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "vp",
+    "salary": { "min": 280000, "max": 380000, "currency": "USD" },
+    "description": "Lead a 120-person engineering organization building healthcare SaaS products used by 3,000+ clinics nationwide. You will own the engineering culture, hiring strategy, and technical roadmap.",
+    "responsibilities": [
+      "Lead, grow, and develop 120 engineers across 8 teams",
+      "Partner with the CEO and product leadership to align engineering with business objectives",
+      "Drive engineering culture, hiring, and retention strategy",
+      "Own the technology roadmap and make high-stakes architectural trade-offs"
+    ],
+    "requirements": [
+      "15+ years in software engineering, with 5+ in VP or Director roles",
+      "Proven experience scaling engineering organizations from 50 to 150+ people",
+      "Deep understanding of healthcare compliance (HIPAA) preferred",
+      "Track record of shipping complex products on time and budget"
+    ],
+    "tags": ["Engineering Leadership", "Team Building", "HIPAA", "SaaS", "Roadmap Planning"],
+    "postedAt": "2026-04-05",
+    "remote": true
+  },
+  {
+    "id": "eng-007",
+    "title": "DevOps Engineer",
+    "company": "Cascade Cloud",
+    "location": "Denver, CO",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "mid",
+    "salary": { "min": 115000, "max": 145000, "currency": "USD" },
+    "description": "Maintain and improve the cloud infrastructure powering our SaaS platform serving 500+ enterprise customers. Focus on reliability, security, and cost optimization.",
+    "responsibilities": [
+      "Manage AWS infrastructure using Terraform and CloudFormation",
+      "Build and maintain CI/CD pipelines using GitHub Actions",
+      "Monitor system health and respond to production incidents",
+      "Implement security best practices and compliance controls"
+    ],
+    "requirements": [
+      "3+ years of DevOps or cloud infrastructure experience",
+      "Proficiency with AWS services (EC2, EKS, RDS, S3, CloudFront)",
+      "Experience with containerization (Docker, Kubernetes)",
+      "Scripting skills in Python or Bash"
+    ],
+    "tags": ["AWS", "Terraform", "Kubernetes", "Docker", "CI/CD", "Python", "Bash"],
+    "postedAt": "2026-04-22",
+    "remote": true
+  },
+  {
+    "id": "eng-008",
+    "title": "iOS Developer",
+    "company": "Velox Mobile",
+    "location": "Los Angeles, CA",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "mid",
+    "salary": { "min": 130000, "max": 160000, "currency": "USD" },
+    "description": "Build and ship features in our iOS consumer app with 8M+ downloads. You'll own high-impact features from design to App Store release.",
+    "responsibilities": [
+      "Build new features in Swift using SwiftUI and UIKit",
+      "Optimize app performance and reduce memory footprint",
+      "Collaborate with designers on pixel-perfect UI implementation",
+      "Write unit and UI tests using XCTest"
+    ],
+    "requirements": [
+      "3-5 years of iOS development experience",
+      "Strong Swift proficiency; Objective-C a plus",
+      "Experience shipping to the App Store",
+      "Understanding of iOS memory management and concurrency"
+    ],
+    "tags": ["Swift", "SwiftUI", "UIKit", "iOS", "XCTest", "Core Data"],
+    "postedAt": "2026-04-18",
+    "remote": false
+  },
+  {
+    "id": "eng-009",
+    "title": "Engineering Manager",
+    "company": "Prism Analytics",
+    "location": "Remote",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "director",
+    "salary": { "min": 190000, "max": 240000, "currency": "USD" },
+    "description": "Lead a 15-person full-stack team building our next-generation analytics platform. Balance people management with staying technically engaged.",
+    "responsibilities": [
+      "Manage, coach, and grow 15 engineers across 2 squads",
+      "Run sprint planning, retrospectives, and performance reviews",
+      "Drive technical direction and architectural decisions for your teams",
+      "Partner with product managers to define and prioritize roadmap"
+    ],
+    "requirements": [
+      "5+ years of engineering experience, 2+ in people management",
+      "Track record of building high-performing engineering teams",
+      "Strong technical background in full-stack or backend development",
+      "Excellent communication and organizational skills"
+    ],
+    "tags": ["Engineering Management", "Agile", "Scrum", "Full-Stack", "Team Leadership"],
+    "postedAt": "2026-04-12",
+    "remote": true
+  },
+  {
+    "id": "eng-010",
+    "title": "Software Engineering Intern",
+    "company": "Novu Technologies",
+    "location": "San Jose, CA",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "intern",
+    "salary": { "min": 40000, "max": 55000, "currency": "USD" },
+    "description": "Join our engineering team for a 12-week summer internship working on real production features. Past interns have shipped code used by millions of users.",
+    "responsibilities": [
+      "Build a complete feature end-to-end with guidance from a mentor",
+      "Write tests and documentation for your contributions",
+      "Attend engineering all-hands and design reviews",
+      "Present your project at intern demo day"
+    ],
+    "requirements": [
+      "Currently enrolled in a CS or related degree program",
+      "Familiarity with at least one programming language (Python, JavaScript, Java, etc.)",
+      "Eagerness to learn and ask questions",
+      "Available for 12 weeks"
+    ],
+    "tags": ["Python", "JavaScript", "Git", "Internship"],
+    "postedAt": "2026-04-30",
+    "remote": false
+  },
+  {
+    "id": "eng-011",
+    "title": "Full Stack Engineer",
+    "company": "Loop Commerce",
+    "location": "New York, NY",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "mid",
+    "salary": { "min": 125000, "max": 160000, "currency": "USD" },
+    "description": "Build features across our entire e-commerce stack — from Next.js storefront to Node.js APIs to PostgreSQL databases. Ship fast and maintain high quality.",
+    "responsibilities": [
+      "Build full-stack features across React/Next.js frontend and Node.js backend",
+      "Optimize database queries and API performance",
+      "Collaborate with design to implement complex UI components",
+      "Participate in technical design discussions and code reviews"
+    ],
+    "requirements": [
+      "3-5 years of full-stack development experience",
+      "Proficiency in TypeScript, React, and Node.js",
+      "Experience with relational databases and ORMs",
+      "Ability to work across the stack with minimal handoffs"
+    ],
+    "tags": ["TypeScript", "React", "Node.js", "PostgreSQL", "Next.js", "Prisma"],
+    "postedAt": "2026-04-27",
+    "remote": true
+  },
+  {
+    "id": "eng-012",
+    "title": "Senior Security Engineer",
+    "company": "Fortis Cybersecurity",
+    "location": "Washington, DC",
+    "type": "full-time",
+    "domain": "engineering",
+    "seniority": "senior",
+    "salary": { "min": 160000, "max": 210000, "currency": "USD" },
+    "description": "Lead security engineering initiatives across our cloud-native platform protecting financial institutions. Own the security architecture and respond to threats.",
+    "responsibilities": [
+      "Design and implement security controls across cloud infrastructure and applications",
+      "Lead threat modeling sessions and security reviews",
+      "Respond to and lead investigation of security incidents",
+      "Build security tooling and automate compliance checks"
+    ],
+    "requirements": [
+      "6+ years of security engineering experience",
+      "Expertise in cloud security (AWS/GCP), IAM, and zero-trust architecture",
+      "Experience with penetration testing and vulnerability management",
+      "Security certifications (CISSP, OSCP, or equivalent) preferred"
+    ],
+    "tags": ["Security", "AWS", "Zero Trust", "IAM", "Penetration Testing", "Python", "SIEM"],
+    "postedAt": "2026-04-19",
+    "remote": false
+  },
+  {
+    "id": "hc-001",
+    "title": "Registered Nurse – ICU",
+    "company": "Northside Medical Center",
+    "location": "Atlanta, GA",
+    "type": "full-time",
+    "domain": "healthcare",
+    "seniority": "mid",
+    "salary": { "min": 72000, "max": 92000, "currency": "USD" },
+    "description": "Provide expert nursing care in our 32-bed ICU. Join a team committed to evidence-based practice and outstanding patient outcomes.",
+    "responsibilities": [
+      "Assess, plan, and implement individualized care for critically ill patients",
+      "Monitor hemodynamic parameters and respond to changes in patient condition",
+      "Collaborate with interdisciplinary team including physicians and respiratory therapy",
+      "Mentor new graduate nurses and nursing students"
+    ],
+    "requirements": [
+      "Active RN license in Georgia",
+      "BSN required; MSN preferred",
+      "2+ years of ICU or critical care experience",
+      "CCRN certification preferred"
+    ],
+    "tags": ["ICU", "Critical Care", "RN", "CCRN", "Ventilator Management", "ACLS"],
+    "postedAt": "2026-04-26",
+    "remote": false
+  },
+  {
+    "id": "hc-002",
+    "title": "Travel Nurse – Med-Surg",
+    "company": "FlexCare Medical Staffing",
+    "location": "Multiple Locations",
+    "type": "contract",
+    "domain": "healthcare",
+    "seniority": "mid",
+    "salary": { "min": 85000, "max": 130000, "currency": "USD" },
+    "description": "13-week travel nursing assignments at top-rated hospitals across the US. Competitive pay packages including housing stipend and travel reimbursement.",
+    "responsibilities": [
+      "Provide direct patient care on medical-surgical units",
+      "Adapt quickly to new facility protocols and workflows",
+      "Maintain accurate clinical documentation in Epic or Cerner",
+      "Collaborate with permanent nursing staff and care teams"
+    ],
+    "requirements": [
+      "Active RN license (compact license preferred)",
+      "2+ years of Med-Surg nursing experience",
+      "Ability to adapt to new environments quickly",
+      "BLS and ACLS certification required"
+    ],
+    "tags": ["Travel Nursing", "Med-Surg", "RN", "Epic", "BLS", "ACLS"],
+    "postedAt": "2026-04-29",
+    "remote": false
+  },
+  {
+    "id": "hc-003",
+    "title": "Physician Assistant – Orthopedics",
+    "company": "Summit Orthopedic Group",
+    "location": "Phoenix, AZ",
+    "type": "full-time",
+    "domain": "healthcare",
+    "seniority": "senior",
+    "salary": { "min": 120000, "max": 160000, "currency": "USD" },
+    "description": "Join our busy orthopedic practice performing first-assist in surgery, managing post-op patients, and running an outpatient clinic with 30+ patients per day.",
+    "responsibilities": [
+      "First-assist in arthroscopic and open orthopedic procedures",
+      "Manage outpatient clinic: evaluations, injections, and follow-up care",
+      "Interpret imaging studies (X-ray, MRI, CT)",
+      "Supervise and train medical students and residents"
+    ],
+    "requirements": [
+      "PA-C license in Arizona",
+      "3+ years of orthopedics or surgical PA experience",
+      "Surgical first-assist experience required",
+      "Proficiency with EMR documentation (Epic preferred)"
+    ],
+    "tags": ["PA-C", "Orthopedics", "Surgery", "Epic", "Outpatient Clinic"],
+    "postedAt": "2026-04-21",
+    "remote": false
+  },
+  {
+    "id": "hc-004",
+    "title": "Medical Coder – AAPC Certified",
+    "company": "RevCycle Partners",
+    "location": "Remote",
+    "type": "full-time",
+    "domain": "healthcare",
+    "seniority": "mid",
+    "salary": { "min": 55000, "max": 75000, "currency": "USD" },
+    "description": "Code complex inpatient and outpatient claims for a network of community hospitals. Work remotely with a team of 40 coders and auditors.",
+    "responsibilities": [
+      "Assign accurate ICD-10-CM, CPT, and HCPCS codes to medical records",
+      "Ensure compliance with payer-specific coding guidelines",
+      "Query physicians for clinical documentation clarification",
+      "Meet daily production and quality accuracy targets"
+    ],
+    "requirements": [
+      "CPC or CCS certification from AAPC or AHIMA",
+      "3+ years of medical coding experience across specialties",
+      "Strong knowledge of ICD-10, CPT, and E&M guidelines",
+      "Experience with 3M or Optum coding software"
+    ],
+    "tags": ["ICD-10", "CPT", "CPC", "CCS", "Medical Coding", "AAPC", "Epic"],
+    "postedAt": "2026-04-24",
+    "remote": true
+  },
+  {
+    "id": "hc-005",
+    "title": "Director of Nursing",
+    "company": "Sunrise Senior Living",
+    "location": "Dallas, TX",
+    "type": "full-time",
+    "domain": "healthcare",
+    "seniority": "director",
+    "salary": { "min": 110000, "max": 145000, "currency": "USD" },
+    "description": "Oversee all nursing operations for a 200-bed long-term care facility. Lead 85 nursing staff and ensure compliance with state and federal regulations.",
+    "responsibilities": [
+      "Lead, supervise, and evaluate nursing staff across all shifts",
+      "Ensure regulatory compliance with CMS, state DOH, and HIPAA",
+      "Develop and implement care standards and nursing policies",
+      "Manage nursing department budget and staffing models"
+    ],
+    "requirements": [
+      "Active RN license",
+      "BSN required; MSN preferred",
+      "5+ years of nursing leadership experience in LTC or SNF",
+      "Knowledge of CMS regulations and state survey processes"
+    ],
+    "tags": ["Nursing Leadership", "LTC", "CMS Compliance", "HIPAA", "Budget Management"],
+    "postedAt": "2026-04-14",
+    "remote": false
+  },
+  {
+    "id": "hc-006",
+    "title": "Clinical Informatics Specialist",
+    "company": "HealthVault Systems",
+    "location": "Minneapolis, MN",
+    "type": "full-time",
+    "domain": "healthcare",
+    "seniority": "mid",
+    "salary": { "min": 80000, "max": 105000, "currency": "USD" },
+    "description": "Bridge clinical practice and technology by optimizing Epic workflows and training clinical staff. Reduce documentation burden while improving data quality.",
+    "responsibilities": [
+      "Optimize Epic EHR configurations and workflows for clinical efficiency",
+      "Train clinical staff on new system features and best practices",
+      "Analyze clinical data to identify workflow bottlenecks",
+      "Partner with IT and clinical leadership on EHR implementation projects"
+    ],
+    "requirements": [
+      "RN, LPN, or allied health background with 3+ years of clinical experience",
+      "Epic certification (Ambulatory, Inpatient, or Orders) strongly preferred",
+      "Strong analytical and problem-solving skills",
+      "Excellent training and communication abilities"
+    ],
+    "tags": ["Epic", "Clinical Informatics", "Healthcare IT", "RN", "EHR Implementation"],
+    "postedAt": "2026-04-17",
+    "remote": true
+  },
+  {
+    "id": "hc-007",
+    "title": "Pharmacy Technician",
+    "company": "CareScript Pharmacy",
+    "location": "Houston, TX",
+    "type": "full-time",
+    "domain": "healthcare",
+    "seniority": "junior",
+    "salary": { "min": 38000, "max": 52000, "currency": "USD" },
+    "description": "Support licensed pharmacists in dispensing medications accurately and efficiently in our high-volume retail pharmacy serving 500+ prescriptions per day.",
+    "responsibilities": [
+      "Process and fill prescription orders under pharmacist supervision",
+      "Verify patient insurance and resolve billing issues",
+      "Maintain accurate medication inventory and controlled substance logs",
+      "Provide excellent customer service at the pharmacy counter"
+    ],
+    "requirements": [
+      "Pharmacy Technician Certification (CPhT) or willingness to obtain within 6 months",
+      "High school diploma or equivalent",
+      "1+ year of retail pharmacy experience preferred",
+      "Detail-oriented with strong organizational skills"
+    ],
+    "tags": ["CPhT", "Pharmacy", "Medication Dispensing", "Customer Service"],
+    "postedAt": "2026-04-28",
+    "remote": false
+  },
+  {
+    "id": "hc-008",
+    "title": "Chief Medical Officer",
+    "company": "Luminary Health Network",
+    "location": "San Francisco, CA",
+    "type": "full-time",
+    "domain": "healthcare",
+    "seniority": "c-suite",
+    "salary": { "min": 400000, "max": 600000, "currency": "USD" },
+    "description": "Lead all clinical strategy and quality initiatives across a 12-hospital integrated health system serving 2M+ patients annually.",
+    "responsibilities": [
+      "Set clinical strategy and quality improvement priorities across the health system",
+      "Lead and develop a team of Chief of Staff and department medical directors",
+      "Serve as the medical voice to the board and external stakeholders",
+      "Drive evidence-based care protocols and outcomes measurement"
+    ],
+    "requirements": [
+      "MD or DO with active license",
+      "10+ years of clinical and medical leadership experience",
+      "Proven track record in quality improvement and patient safety",
+      "Strong executive presence and board-level communication skills"
+    ],
+    "tags": ["CMO", "Clinical Leadership", "Quality Improvement", "Health System", "MD"],
+    "postedAt": "2026-04-08",
+    "remote": false
+  },
+  {
+    "id": "fin-001",
+    "title": "Junior Financial Analyst",
+    "company": "Vantage Capital",
+    "location": "New York, NY",
+    "type": "full-time",
+    "domain": "finance",
+    "seniority": "junior",
+    "salary": { "min": 75000, "max": 95000, "currency": "USD" },
+    "description": "Support investment analysis and financial modeling for our mid-market private equity fund with $2.5B AUM. Rotational role across deal teams.",
+    "responsibilities": [
+      "Build and maintain 3-statement financial models in Excel",
+      "Conduct market research and industry analysis",
+      "Prepare investment committee memos and presentations",
+      "Support due diligence processes for new investments"
+    ],
+    "requirements": [
+      "Bachelor's degree in Finance, Economics, or Accounting",
+      "1-2 years of financial analysis or investment banking experience",
+      "Strong Excel modeling skills",
+      "CFA Level 1 candidate preferred"
+    ],
+    "tags": ["Financial Modeling", "Excel", "Private Equity", "Due Diligence", "CFA"],
+    "postedAt": "2026-04-26",
+    "remote": false
+  },
+  {
+    "id": "fin-002",
+    "title": "Investment Banking Associate",
+    "company": "Harbinger Securities",
+    "location": "New York, NY",
+    "type": "full-time",
+    "domain": "finance",
+    "seniority": "mid",
+    "salary": { "min": 175000, "max": 225000, "currency": "USD" },
+    "description": "Join our M&A advisory team executing sell-side and buy-side transactions in the technology sector. Deal sizes range from $100M to $2B.",
+    "responsibilities": [
+      "Lead financial modeling, valuation, and due diligence on active M&A transactions",
+      "Draft and refine marketing materials (CIMs, management presentations)",
+      "Manage client relationships and coordinate deal process",
+      "Mentor analysts on financial modeling and deal execution"
+    ],
+    "requirements": [
+      "2+ years of investment banking analyst experience",
+      "MBA from a top program preferred",
+      "Expert-level DCF, LBO, and precedent transaction analysis",
+      "Strong attention to detail and ability to manage multiple live deals"
+    ],
+    "tags": ["M&A", "Investment Banking", "DCF", "LBO", "Valuation", "Excel", "PowerPoint"],
+    "postedAt": "2026-04-20",
+    "remote": false
+  },
+  {
+    "id": "fin-003",
+    "title": "Senior Risk Analyst",
+    "company": "Pinnacle Bank",
+    "location": "Charlotte, NC",
+    "type": "full-time",
+    "domain": "finance",
+    "seniority": "senior",
+    "salary": { "min": 110000, "max": 145000, "currency": "USD" },
+    "description": "Lead credit and market risk analysis for our commercial lending portfolio with $8B in outstanding loans. Present findings to executive risk committee.",
+    "responsibilities": [
+      "Model and stress test credit risk across the commercial loan portfolio",
+      "Develop risk metrics and reporting for executive and regulatory audiences",
+      "Lead quantitative analysis using Python and R",
+      "Partner with business lines to evaluate new product risk"
+    ],
+    "requirements": [
+      "5+ years of financial risk analysis experience",
+      "Strong quantitative skills; proficiency in Python or R",
+      "Experience with credit risk modeling and Basel III frameworks",
+      "FRM or CFA designation preferred"
+    ],
+    "tags": ["Risk Analysis", "Credit Risk", "Python", "R", "Basel III", "FRM", "CFA"],
+    "postedAt": "2026-04-16",
+    "remote": false
+  },
+  {
+    "id": "fin-004",
+    "title": "Portfolio Manager – Equities",
+    "company": "Meridian Asset Management",
+    "location": "Boston, MA",
+    "type": "full-time",
+    "domain": "finance",
+    "seniority": "senior",
+    "salary": { "min": 220000, "max": 350000, "currency": "USD" },
+    "description": "Manage a $500M long-only US equity fund for institutional clients. Own the investment thesis, stock selection, and portfolio construction.",
+    "responsibilities": [
+      "Generate alpha through fundamental equity research and portfolio construction",
+      "Manage portfolio risk and track error relative to benchmark",
+      "Present investment ideas and portfolio updates to investment committee",
+      "Build and maintain relationships with IR teams and sell-side analysts"
+    ],
+    "requirements": [
+      "8+ years of equity research or portfolio management experience",
+      "CFA designation required",
+      "Deep knowledge of fundamental equity valuation",
+      "Track record of generating alpha in a public equities strategy"
+    ],
+    "tags": ["Portfolio Management", "Equity Research", "CFA", "Fundamental Analysis", "Asset Management"],
+    "postedAt": "2026-04-11",
+    "remote": false
+  },
+  {
+    "id": "fin-005",
+    "title": "Chief Financial Officer",
+    "company": "Skyline Ventures",
+    "location": "San Francisco, CA",
+    "type": "full-time",
+    "domain": "finance",
+    "seniority": "c-suite",
+    "salary": { "min": 350000, "max": 500000, "currency": "USD" },
+    "description": "Lead all finance functions for a Series C fintech startup with $80M ARR and plans for IPO within 3 years. Build and develop the finance organization.",
+    "responsibilities": [
+      "Own the financial strategy, planning, and reporting for the company",
+      "Lead investor relations, capital markets, and banking relationships",
+      "Build and develop a team of 20 finance professionals",
+      "Partner with the CEO and board on strategic initiatives and M&A"
+    ],
+    "requirements": [
+      "15+ years of finance experience, with 5+ as CFO or VP Finance",
+      "Experience with public company readiness or IPO preparation",
+      "Deep expertise in financial planning, capital allocation, and investor relations",
+      "CPA or CFA preferred"
+    ],
+    "tags": ["CFO", "Financial Strategy", "IPO", "Investor Relations", "CPA", "SaaS Finance"],
+    "postedAt": "2026-04-07",
+    "remote": true
+  },
+  {
+    "id": "fin-006",
+    "title": "Compliance Officer",
+    "company": "Axiom Financial",
+    "location": "Chicago, IL",
+    "type": "full-time",
+    "domain": "finance",
+    "seniority": "mid",
+    "salary": { "min": 95000, "max": 125000, "currency": "USD" },
+    "description": "Ensure regulatory compliance across our broker-dealer and RIA operations. Work with legal and operations to maintain FINRA and SEC compliance programs.",
+    "responsibilities": [
+      "Monitor trading activity for regulatory compliance and potential violations",
+      "Develop and maintain policies and procedures for FINRA/SEC requirements",
+      "Conduct periodic compliance reviews and testing",
+      "Coordinate regulatory examinations and inquiries"
+    ],
+    "requirements": [
+      "4+ years of compliance experience in financial services",
+      "FINRA Series 7 and 24 licenses required",
+      "Knowledge of SEC and FINRA rules and regulations",
+      "Strong documentation and communication skills"
+    ],
+    "tags": ["Compliance", "FINRA", "SEC", "Broker-Dealer", "Risk Management", "Series 7"],
+    "postedAt": "2026-04-23",
+    "remote": false
+  },
+  {
+    "id": "data-001",
+    "title": "Data Analyst",
+    "company": "Lumen Retail",
+    "location": "Seattle, WA",
+    "type": "full-time",
+    "domain": "data",
+    "seniority": "junior",
+    "salary": { "min": 72000, "max": 92000, "currency": "USD" },
+    "description": "Transform sales and customer data into actionable insights for our 500-store retail operation. Build dashboards and reports for merchandising and operations teams.",
+    "responsibilities": [
+      "Write SQL queries to extract and analyze data from Snowflake",
+      "Build dashboards and visualizations in Looker and Tableau",
+      "Support weekly and monthly business reviews with data",
+      "Identify trends and anomalies in sales and inventory data"
+    ],
+    "requirements": [
+      "1-2 years of data analysis experience",
+      "Strong SQL skills; Python a plus",
+      "Experience with BI tools (Looker, Tableau, or Power BI)",
+      "Ability to communicate data findings to non-technical stakeholders"
+    ],
+    "tags": ["SQL", "Looker", "Tableau", "Snowflake", "Python", "Excel"],
+    "postedAt": "2026-04-27",
+    "remote": false
+  },
+  {
+    "id": "data-002",
+    "title": "Data Scientist",
+    "company": "Optica Health",
+    "location": "San Francisco, CA",
+    "type": "full-time",
+    "domain": "data",
+    "seniority": "mid",
+    "salary": { "min": 140000, "max": 175000, "currency": "USD" },
+    "description": "Build predictive models that improve patient outcomes at one of the largest digital health companies. Work on churn prediction, risk stratification, and clinical NLP.",
+    "responsibilities": [
+      "Develop and evaluate machine learning models using Python (scikit-learn, XGBoost)",
+      "Design experiments and analyze A/B test results",
+      "Collaborate with product and engineering to deploy models to production",
+      "Present findings and model performance to business stakeholders"
+    ],
+    "requirements": [
+      "3+ years of data science experience",
+      "Strong Python skills (pandas, scikit-learn, PyTorch or TensorFlow)",
+      "Experience with A/B testing and causal inference",
+      "Healthcare data experience preferred (claims data, EHR data)"
+    ],
+    "tags": ["Python", "Machine Learning", "scikit-learn", "XGBoost", "A/B Testing", "SQL", "Healthcare"],
+    "postedAt": "2026-04-22",
+    "remote": true
+  },
+  {
+    "id": "data-003",
+    "title": "ML Research Engineer",
+    "company": "Quasar AI",
+    "location": "New York, NY",
+    "type": "full-time",
+    "domain": "data",
+    "seniority": "senior",
+    "salary": { "min": 180000, "max": 240000, "currency": "USD" },
+    "description": "Conduct applied research and build production ML systems at the intersection of NLP and knowledge graphs. Publish and present at top ML venues.",
+    "responsibilities": [
+      "Research and implement state-of-the-art NLP and graph ML techniques",
+      "Design experiments, evaluate models, and iterate rapidly",
+      "Build scalable training pipelines using PyTorch and Hugging Face",
+      "Collaborate with product teams to bring research into production"
+    ],
+    "requirements": [
+      "PhD or MS in Machine Learning, Statistics, or related field",
+      "5+ years of ML research or engineering experience",
+      "Strong publication record or portfolio of impactful ML projects",
+      "Deep expertise in transformer architectures and NLP"
+    ],
+    "tags": ["PyTorch", "NLP", "Transformers", "Hugging Face", "Graph ML", "Python", "Research"],
+    "postedAt": "2026-04-18",
+    "remote": false
+  },
+  {
+    "id": "data-004",
+    "title": "Analytics Engineer",
+    "company": "Beacon Commerce",
+    "location": "Remote",
+    "type": "full-time",
+    "domain": "data",
+    "seniority": "mid",
+    "salary": { "min": 120000, "max": 150000, "currency": "USD" },
+    "description": "Own our data transformation layer using dbt to power analytics for 50+ internal stakeholders. Bridge the gap between data engineering and business intelligence.",
+    "responsibilities": [
+      "Build and maintain dbt models transforming raw data into clean analytics tables",
+      "Define data quality tests and monitoring to ensure data reliability",
+      "Partner with analysts to understand reporting needs and data requirements",
+      "Document data lineage and maintain the data dictionary"
+    ],
+    "requirements": [
+      "3+ years of analytics engineering or data engineering experience",
+      "Expert SQL skills and strong Python",
+      "Experience with dbt and cloud data warehouses (Snowflake, BigQuery, or Redshift)",
+      "Strong understanding of data modeling concepts"
+    ],
+    "tags": ["dbt", "SQL", "Snowflake", "BigQuery", "Python", "Data Modeling", "Airflow"],
+    "postedAt": "2026-04-25",
+    "remote": true
+  },
+  {
+    "id": "data-005",
+    "title": "AI Product Manager",
+    "company": "Decimal AI",
+    "location": "San Francisco, CA",
+    "type": "full-time",
+    "domain": "product",
+    "seniority": "mid",
+    "salary": { "min": 150000, "max": 195000, "currency": "USD" },
+    "description": "Lead product strategy for our AI-powered talent intelligence platform. Bridge customer needs, ML research, and engineering to ship products that redefine how companies hire.",
+    "responsibilities": [
+      "Own the product roadmap for our AI matching and recommendation features",
+      "Conduct user research, synthesize insights, and define product requirements",
+      "Work closely with ML engineers and data scientists to define model requirements",
+      "Drive go-to-market strategy for new AI features"
+    ],
+    "requirements": [
+      "4+ years of product management experience, ideally in B2B SaaS or AI products",
+      "Experience working with ML teams on model-driven product features",
+      "Strong analytical skills; ability to run SQL queries and interpret model metrics",
+      "Excellent written and verbal communication"
+    ],
+    "tags": ["Product Management", "AI", "B2B SaaS", "ML Products", "User Research", "SQL"],
+    "postedAt": "2026-04-30",
+    "remote": true
+  },
+  {
+    "id": "data-006",
+    "title": "BI Developer",
+    "company": "Granite Logistics",
+    "location": "Dallas, TX",
+    "type": "full-time",
+    "domain": "data",
+    "seniority": "mid",
+    "salary": { "min": 95000, "max": 125000, "currency": "USD" },
+    "description": "Build and maintain business intelligence dashboards for our 200-person operations and finance teams. Own the company's Power BI environment.",
+    "responsibilities": [
+      "Design, develop, and maintain Power BI reports and dashboards",
+      "Write optimized SQL queries against Azure Synapse Analytics",
+      "Translate business requirements into clear data visualizations",
+      "Train end users and maintain documentation for the BI platform"
+    ],
+    "requirements": [
+      "3+ years of BI development experience",
+      "Expert Power BI or Tableau skills",
+      "Strong SQL; DAX proficiency a strong plus",
+      "Experience with Azure or AWS data services"
+    ],
+    "tags": ["Power BI", "SQL", "DAX", "Azure Synapse", "Data Visualization", "ETL"],
+    "postedAt": "2026-04-20",
+    "remote": false
+  },
+  {
+    "id": "ops-001",
+    "title": "Operations Coordinator",
+    "company": "Relay Fulfillment",
+    "location": "Louisville, KY",
+    "type": "full-time",
+    "domain": "operations",
+    "seniority": "junior",
+    "salary": { "min": 48000, "max": 65000, "currency": "USD" },
+    "description": "Coordinate daily fulfillment operations at our 500,000 sq ft distribution center. Ensure accurate, on-time order processing and cross-functional communication.",
+    "responsibilities": [
+      "Coordinate order flow between warehouse, shipping, and customer service teams",
+      "Track and report on daily operational KPIs (fill rate, on-time shipment, error rate)",
+      "Troubleshoot order exceptions and escalate as needed",
+      "Support process improvement projects and standard operating procedures"
+    ],
+    "requirements": [
+      "1-2 years of operations, logistics, or supply chain experience",
+      "Proficiency in Excel and WMS systems",
+      "Strong organizational skills and attention to detail",
+      "Ability to thrive in a fast-paced warehouse environment"
+    ],
+    "tags": ["Operations", "Supply Chain", "WMS", "Excel", "Logistics"],
+    "postedAt": "2026-04-28",
+    "remote": false
+  },
+  {
+    "id": "ops-002",
+    "title": "Supply Chain Manager",
+    "company": "Vertex Consumer Goods",
+    "location": "Chicago, IL",
+    "type": "full-time",
+    "domain": "operations",
+    "seniority": "mid",
+    "salary": { "min": 95000, "max": 130000, "currency": "USD" },
+    "description": "Manage end-to-end supply chain for our 80 SKU consumer packaged goods portfolio. Own inventory planning, supplier relationships, and logistics cost optimization.",
+    "responsibilities": [
+      "Develop and maintain demand forecasts and inventory replenishment plans",
+      "Negotiate contracts and manage relationships with 30+ suppliers and logistics providers",
+      "Lead S&OP process with cross-functional stakeholders",
+      "Identify and implement cost reduction initiatives in procurement and logistics"
+    ],
+    "requirements": [
+      "5+ years of supply chain management experience",
+      "Experience with ERP systems (SAP, Oracle, or NetSuite)",
+      "Strong analytical skills and proficiency in Excel",
+      "APICS CSCP or CPIM certification preferred"
+    ],
+    "tags": ["Supply Chain", "Demand Planning", "SAP", "S&OP", "Procurement", "CPIM"],
+    "postedAt": "2026-04-22",
+    "remote": false
+  },
+  {
+    "id": "ops-003",
+    "title": "Chief Operating Officer",
+    "company": "Redwood Scale",
+    "location": "San Francisco, CA",
+    "type": "full-time",
+    "domain": "operations",
+    "seniority": "c-suite",
+    "salary": { "min": 320000, "max": 500000, "currency": "USD" },
+    "description": "Scale operations for a high-growth Series D marketplace with $200M in annual GMV. Own everything from customer support to vendor operations to logistics.",
+    "responsibilities": [
+      "Own all operational functions including logistics, support, and vendor management",
+      "Build and lead an operations organization of 150+ people",
+      "Define and execute the operational playbook for rapid geographic expansion",
+      "Partner with CEO and board on company strategy and fundraising"
+    ],
+    "requirements": [
+      "15+ years of operations experience, with 5+ as COO or VP Operations",
+      "Experience scaling marketplace or e-commerce operations",
+      "Track record of building and leading large operations teams",
+      "Data-driven with strong analytical skills"
+    ],
+    "tags": ["COO", "Operations Leadership", "Marketplace", "Scaling", "Logistics", "Team Building"],
+    "postedAt": "2026-04-10",
+    "remote": false
+  },
+  {
+    "id": "ops-004",
+    "title": "Program Manager",
+    "company": "TechBridge Solutions",
+    "location": "Remote",
+    "type": "full-time",
+    "domain": "operations",
+    "seniority": "mid",
+    "salary": { "min": 100000, "max": 130000, "currency": "USD" },
+    "description": "Drive cross-functional programs from ideation to completion for our enterprise SaaS product. Own program tracking, stakeholder communication, and risk management.",
+    "responsibilities": [
+      "Define program scope, milestones, and success metrics",
+      "Coordinate work across engineering, product, legal, and go-to-market teams",
+      "Manage risks, dependencies, and escalations proactively",
+      "Facilitate program reviews and communicate status to senior leadership"
+    ],
+    "requirements": [
+      "4+ years of program or project management experience",
+      "PMP or equivalent certification preferred",
+      "Experience managing cross-functional technology programs",
+      "Proficiency with project management tools (Jira, Asana, Monday)"
+    ],
+    "tags": ["Program Management", "PMP", "Jira", "Agile", "Cross-Functional", "Stakeholder Management"],
+    "postedAt": "2026-04-19",
+    "remote": true
+  },
+  {
+    "id": "design-001",
+    "title": "Product Designer",
+    "company": "Quill Design Studio",
+    "location": "San Francisco, CA",
+    "type": "full-time",
+    "domain": "design",
+    "seniority": "mid",
+    "salary": { "min": 120000, "max": 155000, "currency": "USD" },
+    "description": "Design end-to-end product experiences for our B2C mobile app with 5M users. Own flows from initial research through shipped designs.",
+    "responsibilities": [
+      "Lead end-to-end design for major product features: research, wireframes, high-fidelity designs, and prototypes",
+      "Collaborate closely with product managers and engineers in agile squads",
+      "Conduct user research, usability testing, and synthesize insights",
+      "Contribute to and maintain the design system"
+    ],
+    "requirements": [
+      "4+ years of product or UX design experience",
+      "Proficiency in Figma",
+      "Strong portfolio demonstrating end-to-end design process",
+      "Experience with user research methods (interviews, usability testing)"
+    ],
+    "tags": ["Figma", "UX Design", "Product Design", "User Research", "Prototyping", "Design Systems"],
+    "postedAt": "2026-04-25",
+    "remote": true
+  },
+  {
+    "id": "design-002",
+    "title": "UX Researcher",
+    "company": "Coherent Labs",
+    "location": "New York, NY",
+    "type": "full-time",
+    "domain": "design",
+    "seniority": "mid",
+    "salary": { "min": 110000, "max": 140000, "currency": "USD" },
+    "description": "Lead user research for our enterprise software product used by 50,000+ knowledge workers. Define the research agenda and bring the user voice into product decisions.",
+    "responsibilities": [
+      "Plan and conduct qualitative and quantitative research studies",
+      "Synthesize findings into actionable insights for product teams",
+      "Build and maintain user panels and research operations",
+      "Evangelize user-centered design practices across the organization"
+    ],
+    "requirements": [
+      "4+ years of UX research experience",
+      "Proficiency in qualitative and quantitative research methods",
+      "Experience with research tools (Maze, UserTesting, Dovetail)",
+      "Strong written and verbal storytelling ability"
+    ],
+    "tags": ["UX Research", "User Testing", "Figma", "Qualtrics", "Dovetail", "Mixed Methods"],
+    "postedAt": "2026-04-21",
+    "remote": false
+  },
+  {
+    "id": "design-003",
+    "title": "Senior Product Manager",
+    "company": "Horizon Health Tech",
+    "location": "Boston, MA",
+    "type": "full-time",
+    "domain": "product",
+    "seniority": "senior",
+    "salary": { "min": 160000, "max": 200000, "currency": "USD" },
+    "description": "Lead product development for our clinical decision support tools used by 50,000+ clinicians. Own the roadmap, define requirements, and ship high-quality products.",
+    "responsibilities": [
+      "Define and own the product roadmap for clinical decision support",
+      "Conduct user research with clinicians and translate insights into requirements",
+      "Partner with engineering, design, and clinical affairs to ship products",
+      "Drive product launches and go-to-market in collaboration with sales and marketing"
+    ],
+    "requirements": [
+      "6+ years of product management experience",
+      "Experience in healthcare or clinical software strongly preferred",
+      "Track record of shipping complex software products on time",
+      "Strong analytical skills; comfort with data and metrics"
+    ],
+    "tags": ["Product Management", "Healthcare", "Clinical Software", "Agile", "Roadmap", "User Research"],
+    "postedAt": "2026-04-16",
+    "remote": true
+  },
+  {
+    "id": "design-004",
+    "title": "Head of Design",
+    "company": "Atlas Analytics",
+    "location": "Austin, TX",
+    "type": "full-time",
+    "domain": "design",
+    "seniority": "director",
+    "salary": { "min": 175000, "max": 220000, "currency": "USD" },
+    "description": "Build and lead the design org at a fast-growing analytics startup. Set the design vision, hire a team of 8, and elevate product quality across the entire platform.",
+    "responsibilities": [
+      "Define and champion the design vision and quality bar for all products",
+      "Hire, manage, and develop a team of 8 designers and researchers",
+      "Partner with VP Product and CTO on product strategy",
+      "Build and maintain a comprehensive design system"
+    ],
+    "requirements": [
+      "10+ years of design experience, with 3+ in design leadership",
+      "Proven track record building design teams at SaaS companies",
+      "Strong portfolio of shipped B2B products",
+      "Excellent cross-functional leadership and communication skills"
+    ],
+    "tags": ["Design Leadership", "Figma", "Design Systems", "B2B SaaS", "Team Management", "UX"],
+    "postedAt": "2026-04-13",
+    "remote": false
+  },
+  {
+    "id": "mktg-001",
+    "title": "Growth Marketing Manager",
+    "company": "Orbit SaaS",
+    "location": "Remote",
+    "type": "full-time",
+    "domain": "marketing",
+    "seniority": "mid",
+    "salary": { "min": 95000, "max": 130000, "currency": "USD" },
+    "description": "Own growth marketing strategy and execution for our B2B SaaS product with $15M ARR. Run campaigns across paid, SEO, and lifecycle channels.",
+    "responsibilities": [
+      "Plan and execute multi-channel demand generation campaigns",
+      "Optimize paid search and paid social campaigns (Google, LinkedIn)",
+      "Build and optimize lifecycle email sequences for free-to-paid conversion",
+      "Analyze funnel performance and report on CAC, LTV, and pipeline contribution"
+    ],
+    "requirements": [
+      "4+ years of growth or demand generation marketing experience",
+      "Experience with B2B SaaS marketing and PLG motions",
+      "Proficiency with HubSpot or Marketo and Google Analytics",
+      "Strong analytical skills and data-driven mindset"
+    ],
+    "tags": ["Growth Marketing", "SEO", "SEM", "HubSpot", "B2B", "Demand Generation", "Email Marketing"],
+    "postedAt": "2026-04-24",
+    "remote": true
+  },
+  {
+    "id": "legal-001",
+    "title": "Corporate Counsel",
+    "company": "Ascend Ventures",
+    "location": "Palo Alto, CA",
+    "type": "full-time",
+    "domain": "legal",
+    "seniority": "senior",
+    "salary": { "min": 175000, "max": 230000, "currency": "USD" },
+    "description": "Serve as the primary legal advisor for a Series C startup scaling from 80 to 300 employees. Own commercial contracts, employment law, IP, and regulatory compliance.",
+    "responsibilities": [
+      "Draft, review, and negotiate commercial contracts (SaaS, vendor, partnership)",
+      "Advise on employment law matters across multiple states",
+      "Support fundraising, M&A diligence, and equity compensation",
+      "Build scalable legal processes and manage outside counsel relationships"
+    ],
+    "requirements": [
+      "JD from an accredited law school; bar admission required",
+      "5+ years of corporate legal experience, ideally in-house at a tech startup",
+      "Experience with SaaS contracts, IP, and data privacy (GDPR, CCPA)",
+      "Strong business judgment and ability to work autonomously"
+    ],
+    "tags": ["Corporate Law", "SaaS Contracts", "IP Law", "GDPR", "CCPA", "Employment Law", "M&A"],
+    "postedAt": "2026-04-18",
+    "remote": true
+  }
+]
