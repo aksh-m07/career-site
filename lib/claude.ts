@@ -1,27 +1,29 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { z } from "zod"
-import type { CandidateProfile, Domain, MatchedJob, Seniority, Job } from "./types"
+import type { CandidateProfile, Family, Job, Level } from "./types"
+import { LEVEL_RANK } from "./types"
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-const SENIORITY_RANK: Record<Seniority, number> = {
-  intern: 0,
-  junior: 1,
-  mid: 2,
-  senior: 3,
-  staff: 4,
-  principal: 5,
-  director: 6,
-  vp: 7,
-  "c-suite": 8,
+const FAMILY_GROUPS: Record<string, Family[]> = {
+  technical: ["eng", "data", "product", "design"],
+  clinical:  ["health"],
+  business:  ["finance", "ops", "legal", "marketing", "sales", "people", "cs"],
+}
+
+function getFamilyGroup(f: Family): string {
+  for (const [group, fams] of Object.entries(FAMILY_GROUPS)) {
+    if (fams.includes(f)) return group
+  }
+  return "other"
 }
 
 const CandidateProfileSchema = z.object({
   name: z.string().optional().nullable(),
   currentTitle: z.string(),
-  seniorityLevel: z.enum(["intern", "junior", "mid", "senior", "staff", "principal", "director", "vp", "c-suite"]),
+  seniorityLevel: z.enum(["Intern", "Associate", "Mid", "Senior", "Staff", "Lead", "Manager", "Director", "VP", "Executive"]),
   yearsOfExperience: z.number(),
-  domain: z.enum(["engineering", "healthcare", "finance", "data", "operations", "design", "product", "legal", "marketing"]),
+  family: z.enum(["eng", "design", "product", "data", "marketing", "sales", "ops", "finance", "people", "legal", "cs", "health"]),
   skills: z.array(z.string()),
   industries: z.array(z.string()),
   summary: z.string(),
@@ -30,8 +32,8 @@ const CandidateProfileSchema = z.object({
 const MatchResultSchema = z.array(
   z.object({
     jobId: z.string(),
-    score: z.number().min(0).max(100),
-    reason: z.string(),
+    matchScore: z.number().min(0).max(100),
+    matchReason: z.string(),
   })
 )
 
@@ -42,32 +44,25 @@ export async function parseResume(resumeText: string): Promise<CandidateProfile>
     messages: [
       {
         role: "user",
-        content: `You are a resume parser. Extract structured information from the following resume text.
+        content: `Parse this resume and return ONLY valid JSON — no other text.
 
-Return ONLY valid JSON matching this exact schema, with no additional text:
+Schema:
 {
-  "name": string or null,
-  "currentTitle": string (most recent job title),
-  "seniorityLevel": one of: "intern" | "junior" | "mid" | "senior" | "staff" | "principal" | "director" | "vp" | "c-suite",
-  "yearsOfExperience": number (total years of professional experience),
-  "domain": one of: "engineering" | "healthcare" | "finance" | "data" | "operations" | "design" | "product" | "legal" | "marketing",
-  "skills": array of strings (technical and soft skills found in the resume),
-  "industries": array of strings (industries the candidate has worked in),
-  "summary": string (2-sentence summary of candidate profile)
+  "name": string | null,
+  "currentTitle": string,
+  "seniorityLevel": "Intern" | "Associate" | "Mid" | "Senior" | "Staff" | "Lead" | "Manager" | "Director" | "VP" | "Executive",
+  "yearsOfExperience": number,
+  "family": "eng" | "design" | "product" | "data" | "marketing" | "sales" | "ops" | "finance" | "people" | "legal" | "cs" | "health",
+  "skills": string[],
+  "industries": string[],
+  "summary": string
 }
 
-Seniority guidelines:
-- intern: student or <1 year experience
-- junior: 1-3 years
-- mid: 3-6 years
-- senior: 6-10 years
-- staff: 8-12 years with broad scope/impact
-- principal: 10+ years with org-wide influence
-- director: manages managers or large teams
-- vp: VP-level or above, strategic leadership
-- c-suite: CEO, CTO, CFO, CMO, COO, etc.
+Seniority: Intern=student/<1yr, Associate=1-3yr, Mid=3-6yr, Senior=6-10yr, Staff/Lead=broad scope 8-12yr, Manager=manages people, Director=manages managers, VP=senior leader, Executive=C-suite.
 
-Resume text:
+Family mapping: eng=software/devops/infra, data=ML/data science/analytics, product=product management, design=UX/brand/visual, marketing=marketing/comms/growth, sales=sales/BD, ops=operations/biz ops/strategy, finance=finance/accounting, people=HR/recruiting, legal=legal/compliance, cs=customer success/support/implementation, health=clinical/medical/nursing.
+
+Resume:
 ${resumeText}`,
       },
     ],
@@ -80,88 +75,58 @@ ${resumeText}`,
   if (!jsonMatch) throw new Error("No JSON found in Claude response")
 
   const parsed = JSON.parse(jsonMatch[0])
-  const validated = CandidateProfileSchema.parse(parsed)
-  return validated as CandidateProfile
+  return CandidateProfileSchema.parse(parsed) as CandidateProfile
 }
 
 export async function matchJobsToProfile(
   profile: CandidateProfile,
   allJobs: Job[]
-): Promise<MatchedJob[]> {
-  const candidateSeniorityRank = SENIORITY_RANK[profile.seniorityLevel]
+): Promise<(Job & { matchScore: number; matchReason: string })[]> {
+  const candidateRank = LEVEL_RANK[profile.seniorityLevel as Level]
+  const candidateGroup = getFamilyGroup(profile.family)
 
-  // Pre-filter: remove hard mismatches before sending to Claude.
-  // This is critical at scale — we never want to send 500K jobs to an LLM.
-  // Hard rules: seniority cliff (>2 levels apart) and extreme domain mismatch.
-  const DOMAIN_GROUPS: Record<string, string[]> = {
-    technical: ["engineering", "data", "product"],
-    clinical: ["healthcare"],
-    business: ["finance", "operations", "legal", "marketing"],
-    creative: ["design", "product"],
-  }
-
-  function getDomainGroup(domain: Domain): string {
-    for (const [group, domains] of Object.entries(DOMAIN_GROUPS)) {
-      if (domains.includes(domain)) return group
-    }
-    return "other"
-  }
-
-  const candidateGroup = getDomainGroup(profile.domain)
-
-  const eligibleJobs = allJobs.filter((job) => {
-    const jobSeniorityRank = SENIORITY_RANK[job.seniority]
-    const seniorityGap = Math.abs(candidateSeniorityRank - jobSeniorityRank)
-
-    // Hard seniority cliff: more than 3 levels apart is almost never a good match
-    if (seniorityGap > 3) return false
-
-    // Hard domain mismatch: clinical roles (nursing, medicine) vs. purely technical
-    const jobGroup = getDomainGroup(job.domain)
+  // Pre-filter: hard mismatches before calling Claude
+  const eligible = allJobs.filter(job => {
+    const jobRank = LEVEL_RANK[job.level]
+    if (Math.abs(candidateRank - jobRank) > 3) return false
+    const jobGroup = getFamilyGroup(job.family)
     if (candidateGroup === "clinical" && jobGroup === "technical") return false
     if (candidateGroup === "technical" && jobGroup === "clinical") return false
-
     return true
   })
 
-  if (eligibleJobs.length === 0) {
-    return allJobs.map((job) => ({ ...job, matchScore: 0, matchReason: "Domain and seniority mismatch", isRecommended: false }))
+  if (eligible.length === 0) {
+    return allJobs.map(j => ({ ...j, matchScore: 0, matchReason: "Domain and seniority mismatch" }))
   }
 
-  // Send eligible jobs to Claude Sonnet for nuanced scoring
-  const jobsForClaude = eligibleJobs.map((j) => ({
+  const jobsForClaude = eligible.map(j => ({
     id: j.id,
     title: j.title,
-    domain: j.domain,
-    seniority: j.seniority,
-    requirements: j.requirements,
-    tags: j.tags,
-    description: j.description,
+    family: j.family,
+    level: j.level,
+    skills: j.skills,
+    blurb: j.blurb,
   }))
 
   const message = await client.messages.create({
     model: "claude-sonnet-4-6",
-    max_tokens: 2048,
+    max_tokens: 4096,
     messages: [
       {
         role: "user",
-        content: `You are an expert recruiter AI. Score each job's fit for this candidate from 0-100.
+        content: `You are an expert recruiter. Score each job's fit for this candidate 0-100.
 
-Scoring criteria:
-- Domain alignment (50 pts): How well does the candidate's domain match the job's domain?
-- Seniority fit (30 pts): Is the seniority level appropriate? A VP resume should score low on junior roles even in the right domain.
-- Skills overlap (20 pts): How many required skills does the candidate have?
+Scoring: domain alignment (50pts) + seniority fit (30pts) + skills overlap (20pts).
+80+ = excellent. 50-79 = good. Below 50 = weak.
 
-Be strict. A score of 80+ means "excellent match, apply now". A score below 50 means significant mismatches.
-
-Candidate Profile:
+Candidate:
 ${JSON.stringify(profile, null, 2)}
 
-Jobs to evaluate:
+Jobs:
 ${JSON.stringify(jobsForClaude, null, 2)}
 
-Return ONLY a JSON array with no other text:
-[{ "jobId": string, "score": number, "reason": string (max 12 words, specific to why they match or don't) }]`,
+Return ONLY a JSON array, no other text:
+[{ "jobId": string, "matchScore": number, "matchReason": string (max 15 words, specific) }]`,
       },
     ],
   })
@@ -172,20 +137,12 @@ Return ONLY a JSON array with no other text:
   const jsonMatch = content.text.match(/\[[\s\S]*\]/)
   if (!jsonMatch) throw new Error("No JSON array in Claude response")
 
-  const matchResults = MatchResultSchema.parse(JSON.parse(jsonMatch[0]))
+  const results = MatchResultSchema.parse(JSON.parse(jsonMatch[0]))
+  const scoreMap = new Map(results.map(r => [r.jobId, r]))
 
-  const scoreMap = new Map(matchResults.map((r) => [r.jobId, r]))
-
-  return allJobs.map((job) => {
-    const result = scoreMap.get(job.id)
-    if (!result) {
-      return { ...job, matchScore: 0, matchReason: "Not evaluated (pre-filtered as mismatch)", isRecommended: false }
-    }
-    return {
-      ...job,
-      matchScore: result.score,
-      matchReason: result.reason,
-      isRecommended: result.score >= 65,
-    }
+  return allJobs.map(job => {
+    const r = scoreMap.get(job.id)
+    if (!r) return { ...job, matchScore: 0, matchReason: "Not evaluated (pre-filtered)" }
+    return { ...job, matchScore: r.matchScore, matchReason: r.matchReason }
   })
 }

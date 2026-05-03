@@ -1,19 +1,29 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from "next"
+import "./globals.css"
+import { AppProvider } from "@/components/AppContext"
+import { Header } from "@/components/Header"
+import { Footer } from "@/components/Footer"
+import { ResumeModal } from "@/components/ResumeModal"
+import { JobDrawerWrapper } from "@/components/JobDrawerWrapper"
+import { JOBS } from "@/lib/jobs-data"
 
 export const metadata: Metadata = {
-  title: "JobMatch — AI-Powered Career Discovery",
-  description: "Upload your resume and get personalized job recommendations powered by AI.",
-};
+  title: "Decimal Careers — Build the future of finance",
+  description: "Explore open roles at Decimal AI. Upload your resume for personalized job matching powered by Claude.",
+}
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full">
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en">
+      <body>
+        <AppProvider jobs={JOBS}>
+          <Header />
+          {children}
+          <Footer />
+          <ResumeModal />
+          <JobDrawerWrapper />
+        </AppProvider>
+      </body>
     </html>
-  );
+  )
 }

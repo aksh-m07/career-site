@@ -1,16 +1,19 @@
 import { NextResponse } from "next/server"
 import { matchJobsToProfile } from "@/lib/claude"
-import jobs from "@/data/jobs.json"
-import type { CandidateProfile, Job } from "@/lib/types"
+import { JOBS } from "@/lib/jobs-data"
+import type { CandidateProfile } from "@/lib/types"
 import { z } from "zod"
+
+const FAMILIES = ["eng", "design", "product", "data", "marketing", "sales", "ops", "finance", "people", "legal", "cs", "health"] as const
+const LEVELS = ["Intern", "Associate", "Mid", "Senior", "Staff", "Lead", "Manager", "Director", "VP", "Executive"] as const
 
 const RequestSchema = z.object({
   profile: z.object({
     name: z.string().optional().nullable(),
     currentTitle: z.string(),
-    seniorityLevel: z.enum(["intern", "junior", "mid", "senior", "staff", "principal", "director", "vp", "c-suite"]),
+    seniorityLevel: z.enum(LEVELS),
     yearsOfExperience: z.number(),
-    domain: z.enum(["engineering", "healthcare", "finance", "data", "operations", "design", "product", "legal", "marketing"]),
+    family: z.enum(FAMILIES),
     skills: z.array(z.string()),
     industries: z.array(z.string()),
     summary: z.string(),
@@ -22,14 +25,9 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { profile } = RequestSchema.parse(body)
 
-    const matched = await matchJobsToProfile(profile as CandidateProfile, jobs as Job[])
+    const matched = await matchJobsToProfile(profile as CandidateProfile, JOBS)
 
-    // Sort: recommended first, then by score descending
-    matched.sort((a, b) => {
-      if (a.isRecommended && !b.isRecommended) return -1
-      if (!a.isRecommended && b.isRecommended) return 1
-      return b.matchScore - a.matchScore
-    })
+    matched.sort((a, b) => (b.matchScore ?? 0) - (a.matchScore ?? 0))
 
     return NextResponse.json({ jobs: matched, total: matched.length })
   } catch (error) {

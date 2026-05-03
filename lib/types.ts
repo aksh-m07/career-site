@@ -1,57 +1,79 @@
-export type Domain =
-  | "engineering"
-  | "healthcare"
-  | "finance"
-  | "data"
-  | "operations"
-  | "design"
-  | "product"
-  | "legal"
-  | "marketing"
+export type Family =
+  | "eng" | "design" | "product" | "data"
+  | "marketing" | "sales" | "ops" | "finance"
+  | "people" | "legal" | "cs" | "health"
 
-export type Seniority =
-  | "intern"
-  | "junior"
-  | "mid"
-  | "senior"
-  | "staff"
-  | "principal"
-  | "director"
-  | "vp"
-  | "c-suite"
+export type Level =
+  | "Intern" | "Associate" | "Mid" | "Senior"
+  | "Staff" | "Lead" | "Manager" | "Director" | "VP" | "Executive"
 
-export type JobType = "full-time" | "part-time" | "contract"
+export const FAMILIES: Record<Family, { label: string }> = {
+  eng:       { label: "Engineering" },
+  design:    { label: "Design" },
+  product:   { label: "Product" },
+  data:      { label: "Data & AI" },
+  marketing: { label: "Marketing" },
+  sales:     { label: "Sales" },
+  ops:       { label: "Operations" },
+  finance:   { label: "Finance" },
+  people:    { label: "People" },
+  legal:     { label: "Legal" },
+  cs:        { label: "Customer Success" },
+  health:    { label: "Healthcare" },
+}
+
+export const LEVELS: Level[] = [
+  "Intern", "Associate", "Mid", "Senior",
+  "Staff", "Lead", "Manager", "Director", "VP", "Executive"
+]
+
+export const LEVEL_RANK: Record<Level, number> = Object.fromEntries(
+  LEVELS.map((l, i) => [l, i])
+) as Record<Level, number>
 
 export interface Job {
   id: string
   title: string
-  company: string
+  family: Family
+  level: Level
   location: string
-  type: JobType
-  domain: Domain
-  seniority: Seniority
-  salary: { min: number; max: number; currency: string }
-  description: string
-  responsibilities: string[]
-  requirements: string[]
-  tags: string[]
-  postedAt: string
+  region: "Americas" | "EMEA" | "APAC"
   remote: boolean
+  team: string
+  skills: string[]
+  blurb: string
+  salaryMin: number
+  salaryMax: number
+  postedDays: number
+  employmentType: string
+}
+
+export interface Resume {
+  key: string
+  label: string
+  name: string
+  headline: string
+  summary: string
+  skills: string[]
+  families: Family[]
+  levelRank: number
+  yearsExp: number
+  titleHints: string[]
+}
+
+export interface ScoredJob {
+  job: Job
+  score: number | null
+  reasons: string[]
 }
 
 export interface CandidateProfile {
-  name?: string
+  name?: string | null
   currentTitle: string
-  seniorityLevel: Seniority
+  seniorityLevel: Level
   yearsOfExperience: number
-  domain: Domain
+  family: Family
   skills: string[]
   industries: string[]
   summary: string
-}
-
-export interface MatchedJob extends Job {
-  matchScore: number
-  matchReason: string
-  isRecommended: boolean
 }

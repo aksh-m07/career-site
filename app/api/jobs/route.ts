@@ -1,32 +1,24 @@
 import { NextResponse } from "next/server"
-import jobs from "@/data/jobs.json"
-import type { Job } from "@/lib/types"
+import { JOBS } from "@/lib/jobs-data"
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const domain = searchParams.get("domain")
-  const seniority = searchParams.get("seniority")
+  const family = searchParams.get("family")
+  const region = searchParams.get("region")
   const search = searchParams.get("search")?.toLowerCase()
   const remote = searchParams.get("remote")
 
-  let filtered = jobs as Job[]
+  let filtered = JOBS
 
-  if (domain && domain !== "all") {
-    filtered = filtered.filter((j) => j.domain === domain)
-  }
-  if (seniority && seniority !== "all") {
-    filtered = filtered.filter((j) => j.seniority === seniority)
-  }
-  if (remote === "true") {
-    filtered = filtered.filter((j) => j.remote)
-  }
+  if (family && family !== "all") filtered = filtered.filter(j => j.family === family)
+  if (region && region !== "all") filtered = filtered.filter(j => j.region === region)
+  if (remote === "true") filtered = filtered.filter(j => j.remote)
   if (search) {
-    filtered = filtered.filter(
-      (j) =>
-        j.title.toLowerCase().includes(search) ||
-        j.company.toLowerCase().includes(search) ||
-        j.tags.some((t) => t.toLowerCase().includes(search)) ||
-        j.description.toLowerCase().includes(search)
+    filtered = filtered.filter(j =>
+      j.title.toLowerCase().includes(search) ||
+      j.blurb.toLowerCase().includes(search) ||
+      j.skills.some(s => s.toLowerCase().includes(search)) ||
+      j.team.toLowerCase().includes(search)
     )
   }
 
