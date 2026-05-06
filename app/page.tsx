@@ -36,7 +36,7 @@ export default function Home() {
               Browse open roles <Icons.arrow />
             </Link>
             <button className="btn-ghost lg" onClick={() => setModalOpen(true)}>
-              {resume ? `Viewing as ${resume.name}` : "Upload resume"}
+              {resume ? "Change resume" : "Upload resume"}
             </button>
           </div>
           <div className="hero-foot">
@@ -112,7 +112,7 @@ export default function Home() {
         </p>
         <div className="cta-buttons">
           <button className="btn-primary lg" onClick={() => setModalOpen(true)}>
-            {resume ? "Change profile" : "Upload your resume"} <Icons.upload />
+            {resume ? "Change resume" : "Upload your resume"} <Icons.upload />
           </button>
           <Link href="/jobs" className="btn-ghost lg">
             Browse all roles

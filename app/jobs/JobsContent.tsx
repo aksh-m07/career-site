@@ -73,23 +73,11 @@ export function JobsContent() {
         <p className="lede">
           {scoredJobs.length} positions across engineering, design, product, and more.
           {isMatch
-            ? ` Showing results ranked for ${resume.name}.`
+            ? " Ranked by match score for your resume."
             : " Upload your resume for personalized ranking."}
         </p>
       </div>
 
-      {isMatch && (
-        <div className="personal-banner" style={{ marginBottom: "32px" }}>
-          <div className="pb-left">
-            <Icons.spark />
-            <div>
-              <div className="pb-title">Personalized for {resume.name}</div>
-              <div className="pb-sub">{resume.headline} · roles ranked by match score</div>
-            </div>
-          </div>
-          <button className="btn-ghost sm" onClick={() => setModalOpen(true)}>Change profile</button>
-        </div>
-      )}
 
       <div className="jobs-toolbar">
         <div className="jobs-search">

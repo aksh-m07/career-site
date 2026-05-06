@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useApp } from "./AppContext"
+import { Icons } from "./Icons"
 
 export function Header() {
   const pathname = usePathname()
@@ -28,15 +29,15 @@ export function Header() {
         {link("/process", "Hiring process")}
       </nav>
       <div className="header-actions">
-        {resume && (
-          <div className="header-profile">
-            <span className="profile-dot"/>
-            <span>{resume.name}</span>
-          </div>
+        {resume ? (
+          <button className="btn-ghost sm header-uploaded" onClick={() => setModalOpen(true)}>
+            <Icons.check /> Resume uploaded
+          </button>
+        ) : (
+          <button className="btn-ghost sm" onClick={() => setModalOpen(true)}>
+            <Icons.upload /> Upload resume
+          </button>
         )}
-        <button className="btn-ghost sm" onClick={() => setModalOpen(true)}>
-          {resume ? "Change resume" : "Upload resume"}
-        </button>
       </div>
     </header>
   )
