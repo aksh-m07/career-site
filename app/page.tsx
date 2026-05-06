@@ -4,9 +4,6 @@ import Link from "next/link"
 import { useApp } from "@/components/AppContext"
 import { FeaturedJobCard } from "@/components/FeaturedJobCard"
 import { Icons } from "@/components/Icons"
-import { FAMILIES } from "@/lib/types"
-
-const DISC_ORDER = ["eng", "data", "product", "design", "marketing", "sales", "ops", "finance"] as const
 
 export default function Home() {
   const { scoredJobs, resume, setOpenJob, setModalOpen } = useApp()
@@ -92,25 +89,6 @@ export default function Home() {
               isMatch={isMatch}
               onClick={() => setOpenJob(item)}
             />
-          ))}
-        </div>
-      </section>
-
-      {/* Disciplines */}
-      <section className="disc-strip page-pad">
-        <p className="kicker">By discipline</p>
-        <h2>Every team, one mission</h2>
-        <div className="disc-grid">
-          {DISC_ORDER.map((fam, i) => (
-            <Link
-              key={fam}
-              href={`/jobs?family=${fam}`}
-              className="disc-card"
-            >
-              <div className="disc-num">0{i + 1}</div>
-              <div className="disc-name">{FAMILIES[fam].label}</div>
-              <div className="disc-arrow"><Icons.arrow /></div>
-            </Link>
           ))}
         </div>
       </section>

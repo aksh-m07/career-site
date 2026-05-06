@@ -8,11 +8,10 @@ export function Header() {
   const pathname = usePathname()
   const { resume, setModalOpen } = useApp()
 
-  const link = (href: string, label: string) => (
-    <Link href={href} className={pathname === href || pathname.startsWith(href + "/") ? "on" : ""}>
-      {label}
-    </Link>
-  )
+  const link = (href: string, label: string) => {
+    const isActive = href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/")
+    return <Link href={href} className={isActive ? "on" : ""}>{label}</Link>
+  }
 
   return (
     <header className="site-header">
@@ -22,6 +21,7 @@ export function Header() {
         <span className="brand-sub">Careers</span>
       </Link>
       <nav className="site-nav">
+        {link("/", "Home")}
         {link("/jobs", "Open roles")}
         {link("/teams", "Teams")}
         {link("/life", "Life at Decimal")}

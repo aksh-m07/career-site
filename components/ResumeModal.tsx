@@ -10,7 +10,7 @@ import { LEVEL_RANK } from "@/lib/types"
 type Stage = "idle" | "uploading" | "analyzing" | "done"
 
 export function ResumeModal() {
-  const { modalOpen, setModalOpen, resume, setResume, setScoredJobs } = useApp()
+  const { modalOpen, setModalOpen, resume, setResume, setResumeRaw, setScoredJobs, setCandidateProfile } = useApp()
   const [stage, setStage] = useState<Stage>("idle")
 
   const [picked, setPicked] = useState<string | null>(null)
@@ -75,7 +75,6 @@ export function ResumeModal() {
 
       setStage("done")
       setTimeout(() => {
-        // Build synthetic Resume from profile for display
         const syntheticResume = {
           key: "__file__",
           label: profile.currentTitle,
@@ -88,7 +87,9 @@ export function ResumeModal() {
           yearsExp: profile.yearsOfExperience,
           titleHints: [],
         }
-        // Use AI-scored jobs
+        // setResumeRaw doesn't auto-score; AI scores set after win the batch
+        setResumeRaw(syntheticResume as typeof RESUMES[string])
+        setCandidateProfile(profile)
         if (matchData.jobs) {
           setScoredJobs(matchData.jobs.map((j: { matchScore: number; matchReason: string } & Record<string, unknown>) => ({
             job: j,
@@ -96,7 +97,6 @@ export function ResumeModal() {
             reasons: j.matchReason ? [j.matchReason] : [],
           })))
         }
-        setResume(syntheticResume as typeof RESUMES[string])
         setModalOpen(false)
       }, 500)
     } catch {

@@ -1,6 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap');
-
-@import "tailwindcss";
 
 :root {
   --paper: #FAF7F2;
@@ -17,9 +14,9 @@
   --accent-ink: #7C2A07;
   --good: #2D5F3F;
   --good-soft: rgba(45, 95, 63, 0.08);
-  --serif: "Instrument Serif", "Fraunces", Georgia, serif;
-  --sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --serif: var(--font-serif, "Instrument Serif"), Georgia, "Times New Roman", serif;
+  --sans: var(--font-sans, -apple-system), BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: var(--font-mono, ui-monospace), "SF Mono", Menlo, monospace;
   --radius-sm: 6px;
   --radius: 10px;
   --radius-lg: 16px;
@@ -175,6 +172,56 @@ a { color: inherit; text-decoration: none; }
   background: rgba(250,247,242,.92); backdrop-filter: blur(8px);
   padding: 6px 12px; border-radius: 999px;
   font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--ink-2);
+}
+
+/* ── Hero mock card ──────────────────────────────────────────────────────── */
+.hero-mock {
+  width: 100%; height: 100%;
+  background: var(--ink);
+  padding: 36px 32px;
+  display: flex; flex-direction: column; justify-content: center; gap: 0;
+}
+.hero-mock-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.hero-mock-chip {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+  color: var(--accent); background: rgba(194,65,12,.18);
+  padding: 4px 10px; border-radius: 999px; text-transform: uppercase;
+}
+.hero-mock-id {
+  font-family: var(--mono); font-size: 11px; color: rgba(250,247,242,.3);
+}
+.hero-mock-title {
+  font-family: var(--serif); font-size: clamp(22px, 2.8vw, 32px); font-weight: 400;
+  line-height: 1.15; color: rgba(250,247,242,.95); margin-bottom: 10px;
+}
+.hero-mock-meta {
+  font-size: 13px; color: rgba(250,247,242,.45);
+  display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px;
+}
+.hero-mock-divider {
+  height: 1px; background: rgba(250,247,242,.08); margin-bottom: 24px;
+}
+.hero-mock-score-row {
+  display: flex; align-items: center; gap: 22px;
+}
+.hero-mock-ring-wrap { flex-shrink: 0; }
+.hero-mock-ring-wrap svg circle { }
+.hero-mock-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 10px;
+}
+.hero-mock-reasons {
+  display: flex; flex-direction: column; gap: 7px;
+}
+.hero-mock-reason {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: rgba(250,247,242,.65); line-height: 1.4;
+}
+.hero-mock-reason-dot {
+  width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0;
 }
 
 /* ── Personal banner ─────────────────────────────────────────────────────── */
@@ -534,7 +581,51 @@ a { color: inherit; text-decoration: none; }
 .drawer-list li::before { content: ""; position: absolute; left: 0; top: 9px; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
 .comp { font-size: 22px; font-family: var(--serif); margin: 0 0 4px; }
 .comp-sub { font-size: 14px; color: var(--ink-3); font-family: var(--sans); }
+.drawer-match-low { background: rgba(28,26,23,.04); border: 1px solid var(--line-2); }
 .drawer-cta { display: flex; gap: 10px; padding-top: 20px; border-top: 1px solid var(--line); margin-top: 12px; }
+
+/* ── Tailor section ──────────────────────────────────────────────────────── */
+.tailor-section { border-top: 1px solid var(--line); padding-top: 24px; margin-top: 4px; }
+.tailor-gap { margin-bottom: 18px; }
+.tailor-gap-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); margin-bottom: 10px; }
+.tailor-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tailor-chip { font-size: 12px; padding: 4px 10px; background: rgba(28,26,23,.06); color: var(--ink-2); border-radius: 999px; border: 1px solid var(--line-2); }
+.tailor-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px; border: 1.5px dashed var(--line-2); border-radius: var(--radius);
+  background: transparent; color: var(--ink-2); font-family: inherit; font-size: 14px;
+  cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+}
+.tailor-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.tailor-loading {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px; font-size: 13px; color: var(--ink-3);
+  border: 1px solid var(--line); border-radius: var(--radius);
+}
+.tailor-spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--line-2); border-top-color: var(--accent);
+  animation: spin .8s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.tailor-results { background: var(--paper-2); border-radius: var(--radius); padding: 16px; }
+.tailor-results-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-ink); margin-bottom: 12px; }
+.tailor-list { list-style: none; padding: 0; margin: 0 0 14px; display: flex; flex-direction: column; gap: 8px; }
+.tailor-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--ink); line-height: 1.5; }
+
+/* ── Jobs section break ──────────────────────────────────────────────────── */
+.jobs-section-break {
+  padding: 28px 0 16px;
+  border-top: 1px solid var(--line-2);
+  margin-top: 8px;
+}
+.jobs-section-break-label {
+  font-size: 13px; font-weight: 600; color: var(--ink-3);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;
+}
+.jobs-section-break-hint {
+  font-size: 13px; color: var(--ink-4); line-height: 1.55; max-width: 640px; margin: 0;
+}
 
 /* ── Modal ───────────────────────────────────────────────────────────────── */
 .modal-scrim {

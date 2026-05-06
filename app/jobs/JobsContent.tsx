@@ -194,6 +194,39 @@ export function JobsContent() {
                 <Icons.reset /> Clear filters
               </button>
             </div>
+          ) : isMatch ? (
+            (() => {
+              const matched = paged.filter(i => (i.score ?? 0) >= 50)
+              const other = paged.filter(i => (i.score ?? 0) < 50)
+              return (
+                <>
+                  {matched.length > 0 && (
+                    <div className={`job-list density-${density}`}>
+                      {matched.map(item => (
+                        <JobRow key={item.job.id} item={item} isMatch={isMatch} onClick={() => setOpenJob(item)} />
+                      ))}
+                    </div>
+                  )}
+                  {other.length > 0 && (
+                    <>
+                      <div className="jobs-section-break">
+                        <div className="jobs-section-break-label">
+                          {matched.length === 0 ? "All roles" : "Other roles"} — lower match with your current resume
+                        </div>
+                        <p className="jobs-section-break-hint">
+                          These roles don&apos;t closely match your profile, but tailoring your resume for a specific job can significantly improve your chances. Open any role to see exactly what to change.
+                        </p>
+                      </div>
+                      <div className={`job-list density-${density}`}>
+                        {other.map(item => (
+                          <JobRow key={item.job.id} item={item} isMatch={isMatch} onClick={() => setOpenJob(item)} />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
+              )
+            })()
           ) : (
             <div className={`job-list density-${density}`}>
               {paged.map(item => (
