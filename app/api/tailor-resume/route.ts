@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
-import Groq from "groq-sdk"
+import Anthropic from "@anthropic-ai/sdk"
 import { z } from "zod"
 
-const getClient = () => new Groq({ apiKey: process.env.GROQ_API_KEY })
+const getClient = () => new Anthropic()
 
 const RequestSchema = z.object({
   job: z.object({
@@ -30,8 +30,8 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { job, profile } = RequestSchema.parse(body)
 
-    const message = await getClient().chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+    const message = await getClient().messages.create({
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
       messages: [
         {
@@ -67,7 +67,8 @@ Each item: one concrete action, max 25 words.`,
       ],
     })
 
-    const text = message.choices[0]?.message?.content ?? ""
+    const block = message.content[0]
+    const text = (block?.type === "text" ? block.text : "") ?? ""
     const jsonMatch = text.match(/\[[\s\S]*\]/)
     if (!jsonMatch) throw new Error("No JSON array found in: " + text)
 

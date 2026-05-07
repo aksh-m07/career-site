@@ -1,9 +1,9 @@
-import Groq from "groq-sdk"
+import Anthropic from "@anthropic-ai/sdk"
 import { z } from "zod"
 import type { CandidateProfile, Family, Job, Level } from "./types"
 import { LEVEL_RANK } from "./types"
 
-const getClient = () => new Groq({ apiKey: process.env.GROQ_API_KEY })
+const getClient = () => new Anthropic()
 
 const FAMILY_GROUPS: Record<string, Family[]> = {
   technical: ["eng", "data", "product", "design"],
@@ -38,8 +38,8 @@ const MatchResultSchema = z.array(
 )
 
 export async function parseResume(resumeText: string): Promise<CandidateProfile> {
-  const completion = await getClient().chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+  const message = await getClient().messages.create({
+    model: "claude-haiku-4-5-20251001",
     max_tokens: 1024,
     messages: [
       {
@@ -71,11 +71,12 @@ ${resumeText}`,
     ],
   })
 
-  const text = completion.choices[0]?.message?.content
-  if (!text) throw new Error("Empty response from Groq")
+  const block = message.content[0]
+  if (!block || block.type !== "text") throw new Error("Empty response from AI")
+  const text = block.text
 
   const jsonMatch = text.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error("No JSON found in Groq response")
+  if (!jsonMatch) throw new Error("No JSON found in AI response")
 
   const parsed = JSON.parse(jsonMatch[0])
   return CandidateProfileSchema.parse(parsed) as CandidateProfile
@@ -88,7 +89,7 @@ export async function matchJobsToProfile(
   const candidateRank = LEVEL_RANK[profile.seniorityLevel as Level]
   const candidateGroup = getFamilyGroup(profile.family)
 
-  // Pre-filter: hard mismatches before calling Claude
+  // Pre-filter: hard mismatches before calling AI
   const eligible = allJobs.filter(job => {
     const jobRank = LEVEL_RANK[job.level]
     if (Math.abs(candidateRank - jobRank) > 3) return false
@@ -102,7 +103,7 @@ export async function matchJobsToProfile(
     return allJobs.map(j => ({ ...j, matchScore: 0, matchReason: "Domain and seniority mismatch" }))
   }
 
-  const jobsForClaude = eligible.map(j => ({
+  const jobsForAI = eligible.map(j => ({
     id: j.id,
     title: j.title,
     family: j.family,
@@ -111,8 +112,8 @@ export async function matchJobsToProfile(
     blurb: j.blurb,
   }))
 
-  const completion = await getClient().chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+  const message = await getClient().messages.create({
+    model: "claude-haiku-4-5-20251001",
     max_tokens: 4096,
     messages: [
       {
@@ -126,7 +127,7 @@ Candidate:
 ${JSON.stringify(profile, null, 2)}
 
 Jobs:
-${JSON.stringify(jobsForClaude, null, 2)}
+${JSON.stringify(jobsForAI, null, 2)}
 
 Return ONLY a JSON array, no other text:
 [{ "jobId": string, "matchScore": number, "matchReason": string (max 15 words, specific) }]`,
@@ -134,11 +135,12 @@ Return ONLY a JSON array, no other text:
     ],
   })
 
-  const text = completion.choices[0]?.message?.content
-  if (!text) throw new Error("Empty response from Groq")
+  const block = message.content[0]
+  if (!block || block.type !== "text") throw new Error("Empty response from AI")
+  const text = block.text
 
   const jsonMatch = text.match(/\[[\s\S]*\]/)
-  if (!jsonMatch) throw new Error("No JSON array in Groq response")
+  if (!jsonMatch) throw new Error("No JSON array in AI response")
 
   const results = MatchResultSchema.parse(JSON.parse(jsonMatch[0]))
   const scoreMap = new Map(results.map(r => [r.jobId, r]))
