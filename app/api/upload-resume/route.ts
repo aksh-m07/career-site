@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { parseResume } from "@/lib/claude"
 
 export const runtime = "nodejs"
+export const maxDuration = 30
 
 export async function POST(request: Request) {
   try {
@@ -25,14 +26,30 @@ export async function POST(request: Request) {
     if (name.endsWith(".txt")) {
       text = buffer.toString("utf-8")
     } else if (name.endsWith(".pdf")) {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const pdfParse = require("pdf-parse")
-      const result = await pdfParse(buffer)
-      text = result.text
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const pdfParse = require("pdf-parse/lib/pdf-parse")
+        const result = await pdfParse(buffer)
+        text = result.text
+      } catch (e) {
+        console.error("[upload-resume] PDF parse failed:", e)
+        return NextResponse.json(
+          { error: "Could not read this PDF. Try saving it as a TXT file and uploading that instead." },
+          { status: 400 }
+        )
+      }
     } else if (name.endsWith(".docx") || name.endsWith(".doc")) {
-      const mammoth = await import("mammoth")
-      const result = await mammoth.extractRawText({ buffer })
-      text = result.value
+      try {
+        const mammoth = await import("mammoth")
+        const result = await mammoth.extractRawText({ buffer })
+        text = result.value
+      } catch (e) {
+        console.error("[upload-resume] DOCX parse failed:", e)
+        return NextResponse.json(
+          { error: "Could not read this DOCX file. Try saving it as a TXT file and uploading that instead." },
+          { status: 400 }
+        )
+      }
     }
 
     if (!text || text.trim().length < 50) {
@@ -42,7 +59,7 @@ export async function POST(request: Request) {
       )
     }
 
-    console.log(`[upload-resume] Extracted ${text.length} chars from ${name}, parsing with Claude...`)
+    console.log(`[upload-resume] Extracted ${text.length} chars from ${name}, parsing with Groq...`)
 
     const profile = await parseResume(text)
 
@@ -53,7 +70,7 @@ export async function POST(request: Request) {
     console.error("[upload-resume] Error:", error)
     const msg = error instanceof Error ? error.message : String(error)
     return NextResponse.json(
-      { error: `Failed to process resume: ${msg.slice(0, 120)}` },
+      { error: `Failed to process resume: ${msg.slice(0, 200)}` },
       { status: 500 }
     )
   }
