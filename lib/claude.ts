@@ -3,7 +3,7 @@ import { z } from "zod"
 import type { CandidateProfile, Family, Job, Level } from "./types"
 import { LEVEL_RANK } from "./types"
 
-const client = new Groq({ apiKey: process.env.GROQ_API_KEY })
+const getClient = () => new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 const FAMILY_GROUPS: Record<string, Family[]> = {
   technical: ["eng", "data", "product", "design"],
@@ -38,7 +38,7 @@ const MatchResultSchema = z.array(
 )
 
 export async function parseResume(resumeText: string): Promise<CandidateProfile> {
-  const completion = await client.chat.completions.create({
+  const completion = await getClient().chat.completions.create({
     model: "llama-3.3-70b-versatile",
     max_tokens: 1024,
     messages: [
@@ -111,7 +111,7 @@ export async function matchJobsToProfile(
     blurb: j.blurb,
   }))
 
-  const completion = await client.chat.completions.create({
+  const completion = await getClient().chat.completions.create({
     model: "llama-3.3-70b-versatile",
     max_tokens: 4096,
     messages: [

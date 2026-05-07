@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import Groq from "groq-sdk"
 import { z } from "zod"
 
-const client = new Groq({ apiKey: process.env.GROQ_API_KEY })
+const getClient = () => new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 const RequestSchema = z.object({
   job: z.object({
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { job, profile } = RequestSchema.parse(body)
 
-    const message = await client.chat.completions.create({
+    const message = await getClient().chat.completions.create({
       model: "llama-3.3-70b-versatile",
       max_tokens: 1024,
       messages: [
