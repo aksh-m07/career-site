@@ -67,6 +67,19 @@ export interface ScoredJob {
   reasons: string[]
 }
 
+export type ApplicationStatus = "Applied" | "Under Review" | "Interview Scheduled" | "Offer Extended" | "Rejected"
+
+export interface Application {
+  jobId: string
+  jobTitle: string
+  family: Family
+  level: Level
+  appliedAt: string
+  name: string
+  email: string
+  status: ApplicationStatus
+}
+
 export interface CandidateProfile {
   name?: string | null
   currentTitle: string

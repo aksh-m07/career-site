@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { useApp } from "./AppContext"
-import { RESUMES } from "@/lib/jobs-data"
+import { JOBS, RESUMES, scoreJob } from "@/lib/jobs-data"
 import { Icons } from "./Icons"
 import type { CandidateProfile } from "@/lib/types"
 import { LEVEL_RANK } from "@/lib/types"
@@ -11,6 +12,7 @@ type Stage = "idle" | "parsing" | "parsed" | "matching" | "done" | "error"
 
 export function ResumeModal() {
   const { modalOpen, setModalOpen, resume, setResumeRaw, setScoredJobs, setCandidateProfile } = useApp()
+  const router = useRouter()
   const [stage, setStage] = useState<Stage>("idle")
   const [progress, setProgress] = useState(0)
   const [parsedProfile, setParsedProfile] = useState<CandidateProfile | null>(null)
@@ -70,50 +72,33 @@ export function ResumeModal() {
     if (!parsedProfile) return
     setStage("matching")
 
-    try {
-      const matchRes = await fetch("/api/match-jobs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ profile: parsedProfile }),
-      })
-      const matchData = await matchRes.json()
+    // Score client-side — no second API call needed
+    await new Promise(r => setTimeout(r, 500))
 
-      if (!matchRes.ok) {
-        setErrorMsg(matchData.error ?? "Matching failed. Please try again.")
-        setStage("error")
-        return
-      }
-
-      const jobs = matchData.jobs ?? []
-      const strongMatches = jobs.filter((j: { matchScore: number }) => j.matchScore >= 60).length
-      setMatchCount(strongMatches)
-
-      const syntheticResume = {
-        key: "__file__",
-        label: parsedProfile.currentTitle,
-        name: parsedProfile.name ?? "You",
-        headline: `${parsedProfile.currentTitle} · ${parsedProfile.yearsOfExperience} yrs exp`,
-        summary: parsedProfile.summary,
-        skills: parsedProfile.skills,
-        families: [parsedProfile.family],
-        levelRank: LEVEL_RANK[parsedProfile.seniorityLevel] ?? 3,
-        yearsExp: parsedProfile.yearsOfExperience,
-        titleHints: [],
-      }
-
-      setResumeRaw(syntheticResume as typeof RESUMES[string])
-      setCandidateProfile(parsedProfile)
-      setScoredJobs(jobs.map((j: { matchScore: number; matchReason: string } & Record<string, unknown>) => ({
-        job: j,
-        score: j.matchScore,
-        reasons: j.matchReason ? [j.matchReason] : [],
-      })))
-
-      setStage("done")
-    } catch {
-      setErrorMsg("Matching failed. Please try again.")
-      setStage("error")
+    const syntheticResume = {
+      key: "__file__",
+      label: parsedProfile.currentTitle,
+      name: parsedProfile.name ?? "You",
+      headline: `${parsedProfile.currentTitle} · ${parsedProfile.yearsOfExperience} yrs exp`,
+      summary: parsedProfile.summary,
+      skills: parsedProfile.skills,
+      families: [parsedProfile.family],
+      levelRank: LEVEL_RANK[parsedProfile.seniorityLevel] ?? 3,
+      yearsExp: parsedProfile.yearsOfExperience,
+      titleHints: [],
     }
+
+    const scored = JOBS.map(job => {
+      const { score, reasons } = scoreJob(job, syntheticResume as typeof RESUMES[string])
+      return { job, score, reasons }
+    })
+
+    const strongMatches = scored.filter(j => (j.score ?? 0) >= 60).length
+    setMatchCount(strongMatches)
+    setResumeRaw(syntheticResume as typeof RESUMES[string])
+    setCandidateProfile(parsedProfile)
+    setScoredJobs(scored)
+    setStage("done")
   }
 
   return (
@@ -221,9 +206,9 @@ export function ResumeModal() {
                 : "Roles ranked for you"}
             </h3>
             <p style={{ marginBottom: "24px" }}>Open roles are now sorted by how well they fit your resume.</p>
-            <a href="/jobs" className="btn-primary" style={{ display: "inline-flex", gap: "8px", justifyContent: "center" }} onClick={() => setModalOpen(false)}>
+            <button className="btn-primary" style={{ display: "inline-flex", gap: "8px", justifyContent: "center" }} onClick={() => { setModalOpen(false); router.push("/jobs") }}>
               View matched roles <Icons.arrow />
-            </a>
+            </button>
           </div>
         )}
 

@@ -1,9 +1,9 @@
-import Anthropic from "@anthropic-ai/sdk"
+import Groq from "groq-sdk"
 import { z } from "zod"
 import type { CandidateProfile, Family, Job, Level } from "./types"
 import { LEVEL_RANK } from "./types"
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const client = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 const FAMILY_GROUPS: Record<string, Family[]> = {
   technical: ["eng", "data", "product", "design"],
@@ -38,8 +38,8 @@ const MatchResultSchema = z.array(
 )
 
 export async function parseResume(resumeText: string): Promise<CandidateProfile> {
-  const message = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
+  const completion = await client.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
     max_tokens: 1024,
     messages: [
       {
@@ -58,9 +58,12 @@ Schema:
   "summary": string
 }
 
-Seniority: Intern=student/<1yr, Associate=1-3yr, Mid=3-6yr, Senior=6-10yr, Staff/Lead=broad scope 8-12yr, Manager=manages people, Director=manages managers, VP=senior leader, Executive=C-suite.
-
-Family mapping: eng=software/devops/infra, data=ML/data science/analytics, product=product management, design=UX/brand/visual, marketing=marketing/comms/growth, sales=sales/BD, ops=operations/biz ops/strategy, finance=finance/accounting, people=HR/recruiting, legal=legal/compliance, cs=customer success/support/implementation, health=clinical/medical/nursing.
+Rules:
+- skills: ONLY standalone technologies, languages, frameworks, tools, methodologies (e.g. "TypeScript", "React", "SQL"). Do NOT include project names, company names, or descriptions.
+- summary: 2-3 sentences describing the candidate's career trajectory and core value. Write in third person. Do NOT list projects or responsibilities — describe who they are professionally.
+- yearsOfExperience: count ONLY full-time professional employment. Exclude internships, student projects, and academic experience. If the person's entire experience is internships, set to 0.
+- seniorityLevel: base this on the candidate's CURRENT or MOST RECENT full-time professional role and their overall career arc. IGNORE titles held in university clubs, student organizations, volunteer groups, or extracurricular activities — a "VP of a university club" is a student, not a corporate VP. A person currently working full-time as an engineer is NOT an Intern even if they had internships in the past. Intern=student or <1yr full-time, Associate=1-3yr, Mid=3-6yr, Senior=6-10yr, Staff/Lead=broad scope 8-12yr, Manager=manages people at a company, Director=manages managers at a company, VP=senior corporate leader, Executive=C-suite.
+- family: eng=software/devops/infra, data=ML/data science/analytics, product=product management, design=UX/brand/visual, marketing=marketing/comms/growth, sales=sales/BD, ops=operations/biz ops/strategy, finance=finance/accounting, people=HR/recruiting, legal=legal/compliance, cs=customer success/support/implementation, health=clinical/medical/nursing.
 
 Resume:
 ${resumeText}`,
@@ -68,11 +71,11 @@ ${resumeText}`,
     ],
   })
 
-  const content = message.content[0]
-  if (content.type !== "text") throw new Error("Unexpected response type from Claude")
+  const text = completion.choices[0]?.message?.content
+  if (!text) throw new Error("Empty response from Groq")
 
-  const jsonMatch = content.text.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error("No JSON found in Claude response")
+  const jsonMatch = text.match(/\{[\s\S]*\}/)
+  if (!jsonMatch) throw new Error("No JSON found in Groq response")
 
   const parsed = JSON.parse(jsonMatch[0])
   return CandidateProfileSchema.parse(parsed) as CandidateProfile
@@ -108,8 +111,8 @@ export async function matchJobsToProfile(
     blurb: j.blurb,
   }))
 
-  const message = await client.messages.create({
-    model: "claude-sonnet-4-6",
+  const completion = await client.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
     max_tokens: 4096,
     messages: [
       {
@@ -131,18 +134,18 @@ Return ONLY a JSON array, no other text:
     ],
   })
 
-  const content = message.content[0]
-  if (content.type !== "text") throw new Error("Unexpected response type")
+  const text = completion.choices[0]?.message?.content
+  if (!text) throw new Error("Empty response from Groq")
 
-  const jsonMatch = content.text.match(/\[[\s\S]*\]/)
-  if (!jsonMatch) throw new Error("No JSON array in Claude response")
+  const jsonMatch = text.match(/\[[\s\S]*\]/)
+  if (!jsonMatch) throw new Error("No JSON array in Groq response")
 
   const results = MatchResultSchema.parse(JSON.parse(jsonMatch[0]))
   const scoreMap = new Map(results.map(r => [r.jobId, r]))
 
-  return allJobs.map(job => {
+  return eligible.map(job => {
     const r = scoreMap.get(job.id)
-    if (!r) return { ...job, matchScore: 0, matchReason: "Not evaluated (pre-filtered)" }
+    if (!r) return { ...job, matchScore: 0, matchReason: "Not evaluated" }
     return { ...job, matchScore: r.matchScore, matchReason: r.matchReason }
   })
 }

@@ -216,7 +216,7 @@ export function scoreJob(job: Job, resume: Resume | null): { score: number | nul
   const technicalFamilies: string[] = ["eng", "data", "product", "design"]
   const isCandidateClinical = resume.families.some(f => clinicalFamilies.includes(f))
   const isJobClinical = clinicalFamilies.includes(job.family)
-  if (isCandidateClinical !== isJobClinical) return { score: 2, reasons: [] }
+  if (isCandidateClinical !== isJobClinical) return { score: 0, reasons: [] }
 
   let score = 0
   const reasons: string[] = []

@@ -11,13 +11,17 @@ const fmtSalary = (min: number, max: number) =>
   `$${Math.round(min / 1000)}k – $${Math.round(max / 1000)}k`
 
 type TailorState = "idle" | "loading" | "done" | "error"
+type ApplyState = "idle" | "form" | "submitting" | "done"
 
 export function JobDrawer({ item, onClose }: { item: ScoredJob; onClose: () => void }) {
   const { job, score, reasons } = item
-  const { candidateProfile, resume } = useApp()
+  const { candidateProfile, resume, addApplication, user } = useApp()
 
   const [tailorState, setTailorState] = useState<TailorState>("idle")
   const [suggestions, setSuggestions] = useState<string[]>([])
+  const [applyState, setApplyState] = useState<ApplyState>("idle")
+  const [applyName, setApplyName] = useState("")
+  const [applyEmail, setApplyEmail] = useState("")
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose()
@@ -25,11 +29,41 @@ export function JobDrawer({ item, onClose }: { item: ScoredJob; onClose: () => v
     return () => window.removeEventListener("keydown", onKey)
   }, [onClose])
 
-  // Reset tailor state when job changes
+  // Reset tailor + apply state when job changes
   useEffect(() => {
     setTailorState("idle")
     setSuggestions([])
+    setApplyState("idle")
+    setApplyName("")
+    setApplyEmail("")
   }, [job.id])
+
+  async function submitApplication(e?: React.FormEvent) {
+    e?.preventDefault()
+    setApplyState("submitting")
+    await new Promise(r => setTimeout(r, 900))
+    const name = user?.name ?? applyName
+    const email = user?.email ?? applyEmail
+    setApplyName(name)
+    setApplyEmail(email)
+    addApplication({
+      jobId: job.id,
+      jobTitle: job.title,
+      family: job.family,
+      level: job.level,
+      name,
+      email,
+    })
+    setApplyState("done")
+  }
+
+  async function handleApplyClick() {
+    if (user) {
+      await submitApplication()
+    } else {
+      setApplyState("form")
+    }
+  }
 
   const isLowMatch = resume !== null && score !== null && score < 50
   const hasProfile = resume !== null
@@ -55,6 +89,7 @@ export function JobDrawer({ item, onClose }: { item: ScoredJob; onClose: () => v
         }),
       })
       const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? "Failed to generate suggestions")
       setSuggestions(data.suggestions ?? [])
       setTailorState("done")
     } catch {
@@ -166,14 +201,20 @@ export function JobDrawer({ item, onClose }: { item: ScoredJob; onClose: () => v
                 </div>
               )}
 
-              {tailorState === "done" && suggestions.length > 0 && (
+              {tailorState === "done" && (
                 <div className="tailor-results">
-                  <div className="tailor-results-label">Specific changes to make to your resume</div>
-                  <ul className="tailor-list">
-                    {suggestions.map((s, i) => (
-                      <li key={i}><Icons.check /> {s}</li>
-                    ))}
-                  </ul>
+                  {suggestions.length > 0 ? (
+                    <>
+                      <div className="tailor-results-label">Specific changes to make to your resume</div>
+                      <ul className="tailor-list">
+                        {suggestions.map((s, i) => (
+                          <li key={i}><Icons.check /> {s}</li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : (
+                    <p className="muted" style={{ marginTop: "8px" }}>No specific suggestions generated. Try regenerating.</p>
+                  )}
                   <button className="link-btn sm" onClick={() => { setTailorState("idle"); setSuggestions([]) }}>
                     Regenerate suggestions
                   </button>
@@ -189,10 +230,48 @@ export function JobDrawer({ item, onClose }: { item: ScoredJob; onClose: () => v
             </section>
           )}
 
-          <div className="drawer-cta">
-            <button className="btn-primary">Apply for this role <Icons.arrow /></button>
-            <button className="btn-ghost">Save</button>
-          </div>
+          {applyState === "done" ? (
+            <div className="apply-confirm">
+              <Icons.check />
+              <div>
+                <div className="apply-confirm-title">Application submitted!</div>
+                <div className="apply-confirm-sub">We&apos;ll be in touch at {applyEmail}.</div>
+              </div>
+            </div>
+          ) : !user && (applyState === "form" || applyState === "submitting") ? (
+            <form className="apply-form" onSubmit={submitApplication}>
+              <div className="apply-form-title">Apply for {job.title}</div>
+              <div className="apply-fields">
+                <label>
+                  <span>Full name</span>
+                  <input
+                    type="text" required placeholder="Jane Smith"
+                    value={applyName} onChange={e => setApplyName(e.target.value)}
+                  />
+                </label>
+                <label>
+                  <span>Email</span>
+                  <input
+                    type="email" required placeholder="jane@example.com"
+                    value={applyEmail} onChange={e => setApplyEmail(e.target.value)}
+                  />
+                </label>
+              </div>
+              <div className="drawer-cta">
+                <button className="btn-primary" type="submit" disabled={applyState === "submitting"}>
+                  {applyState === "submitting" ? "Submitting…" : <>Submit application <Icons.arrow /></>}
+                </button>
+                <button className="btn-ghost" type="button" onClick={() => setApplyState("idle")}>Cancel</button>
+              </div>
+            </form>
+          ) : (
+            <div className="drawer-cta">
+              <button className="btn-primary" onClick={handleApplyClick} disabled={applyState === "submitting"}>
+                {applyState === "submitting" ? "Submitting…" : <>Apply for this role <Icons.arrow /></>}
+              </button>
+              <button className="btn-ghost">Save</button>
+            </div>
+          )}
         </div>
       </aside>
     </div>

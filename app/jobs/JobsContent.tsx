@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 import { useApp } from "@/components/AppContext"
 import { JobRow } from "@/components/JobRow"
@@ -18,20 +18,26 @@ export function JobsContent() {
   const [family, setFamily] = useState<Family | "all">(
     (searchParams.get("family") as Family | null) ?? "all"
   )
-  const [region, setRegion] = useState<string>("all")
-  const [remoteOnly, setRemoteOnly] = useState(false)
+  // Removed region and remoteOnly filters
   const [page, setPage] = useState(1)
   const [density, setDensity] = useState<"compact" | "default" | "comfy">("default")
+  const prevResumeRef = useRef(resume)
 
-  useEffect(() => { setPage(1) }, [search, family, region, remoteOnly])
+  // When resume is first loaded, default to the candidate's primary field
+  useEffect(() => {
+    if (resume && !prevResumeRef.current && resume.families?.[0]) {
+      setFamily(resume.families[0] as Family)
+    }
+    prevResumeRef.current = resume
+  }, [resume])
+
+  useEffect(() => { setPage(1) }, [search, family])
 
   const isMatch = resume !== null
 
   const filtered = useMemo(() => {
     let items = [...scoredJobs]
     if (family !== "all") items = items.filter(i => i.job.family === family)
-    if (region !== "all") items = items.filter(i => i.job.region === region)
-    if (remoteOnly) items = items.filter(i => i.job.remote)
     if (search.trim()) {
       const q = search.toLowerCase()
       items = items.filter(i =>
@@ -42,21 +48,28 @@ export function JobsContent() {
       )
     }
     if (isMatch) {
+      // Hide hard-mismatch jobs (domain or level incompatibility)
+      items = items.filter(i => i.score === null || i.score > 0)
       items.sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
     } else {
       items.sort((a, b) => a.job.postedDays - b.job.postedDays)
     }
     return items
-  }, [scoredJobs, family, region, remoteOnly, search, isMatch])
+  }, [scoredJobs, family, search, isMatch])
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
+  const relevantCount = useMemo(() =>
+    isMatch ? scoredJobs.filter(i => (i.score ?? 0) >= 5).length : scoredJobs.length
+  , [scoredJobs, isMatch])
+
   const familyCounts = useMemo(() => {
     const counts: Record<string, number> = {}
-    for (const f of FAMILY_KEYS) counts[f] = scoredJobs.filter(i => i.job.family === f).length
+    const base = isMatch ? scoredJobs.filter(i => (i.score ?? 0) >= 5) : scoredJobs
+    for (const f of FAMILY_KEYS) counts[f] = base.filter(i => i.job.family === f).length
     return counts
-  }, [scoredJobs])
+  }, [scoredJobs, isMatch])
 
   const pageNums = Array.from({ length: totalPages }, (_, i) => i + 1)
     .filter(n => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
@@ -71,10 +84,9 @@ export function JobsContent() {
       <div className="page-header">
         <h1>Open roles</h1>
         <p className="lede">
-          {scoredJobs.length} positions across engineering, design, product, and more.
           {isMatch
-            ? " Ranked by match score for your resume."
-            : " Upload your resume for personalized ranking."}
+            ? `Showing ${relevantCount} of ${scoredJobs.length} roles matched to your profile — irrelevant positions hidden, ranked by fit.`
+            : `${scoredJobs.length} positions across engineering, design, product, and more. Upload your resume for personalized ranking.`}
         </p>
       </div>
 
@@ -95,18 +107,7 @@ export function JobsContent() {
           )}
         </div>
 
-        <div className="seg">
-          {(["Americas", "EMEA", "APAC"] as const).map(r => (
-            <button key={r} className={region === r ? "on" : ""} onClick={() => setRegion(region === r ? "all" : r)}>
-              {r}
-            </button>
-          ))}
-        </div>
-
-        <label className="toggle-row" style={{ fontSize: "13px", color: "var(--ink-2)", userSelect: "none" }}>
-          <input type="checkbox" checked={remoteOnly} onChange={e => setRemoteOnly(e.target.checked)} />
-          Remote only
-        </label>
+        {/* Removed region filter buttons and remote only toggle */}
 
         {!isMatch && (
           <button className="btn-ghost sm" onClick={() => setModalOpen(true)}>
@@ -114,13 +115,7 @@ export function JobsContent() {
           </button>
         )}
 
-        <div style={{ marginLeft: "auto" }}>
-          <div className="seg">
-            <button className={density === "compact" ? "on" : ""} onClick={() => setDensity("compact")} title="Compact">≡</button>
-            <button className={density === "default" ? "on" : ""} onClick={() => setDensity("default")} title="Default">☰</button>
-            <button className={density === "comfy" ? "on" : ""} onClick={() => setDensity("comfy")} title="Comfy">⊟</button>
-          </div>
-        </div>
+        {/* Removed view toggle buttons */}
       </div>
 
       <div className="roles-layout">
@@ -128,8 +123,8 @@ export function JobsContent() {
           <nav className="filters">
             <div className="filter-hd">
               <h4><Icons.filter /> Filters</h4>
-              {(family !== "all" || remoteOnly || region !== "all") && (
-                <button className="link-btn sm" onClick={() => { setFamily("all"); setRemoteOnly(false); setRegion("all") }}>
+              {family !== "all" && (
+                <button className="link-btn sm" onClick={() => { setFamily("all") }}>
                   <Icons.reset /> Reset
                 </button>
               )}
@@ -141,7 +136,7 @@ export function JobsContent() {
                 <li>
                   <button className={`filter-opt ${family === "all" ? "on" : ""}`} onClick={() => setFamily("all")}>
                     All departments
-                    <span className="filter-count">{scoredJobs.length}</span>
+                    <span className="filter-count">{relevantCount}</span>
                   </button>
                 </li>
                 {FAMILY_KEYS.map(f => (
@@ -166,10 +161,18 @@ export function JobsContent() {
         </aside>
 
         <div>
+          {isMatch && family !== "all" && (
+            <div className="personalized-bar">
+              <span>Showing roles in <strong>{FAMILIES[family as Family].label}</strong> — your matched field</span>
+              <button className="link-btn sm" onClick={() => setFamily("all")}>
+                Show all {relevantCount} matched roles
+              </button>
+            </div>
+          )}
           <div className="results-bar">
             <span>
               Showing <strong>{filtered.length}</strong> role{filtered.length !== 1 ? "s" : ""}
-              {family !== "all" ? ` in ${FAMILIES[family].label}` : ""}
+              {family !== "all" ? ` in ${FAMILIES[family as Family].label}` : ""}
             </span>
             {isMatch && <span style={{ fontSize: "12px", color: "var(--ink-4)" }}>Ranked by match score</span>}
           </div>
@@ -178,7 +181,7 @@ export function JobsContent() {
             <div className="empty">
               <h3>No roles found</h3>
               <p>Try adjusting your filters or search term.</p>
-              <button className="btn-ghost" onClick={() => { setSearch(""); setFamily("all"); setRegion("all"); setRemoteOnly(false) }}>
+              <button className="btn-ghost" onClick={() => { setSearch(""); setFamily("all") }}>
                 <Icons.reset /> Clear filters
               </button>
             </div>

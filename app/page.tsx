@@ -6,13 +6,14 @@ import { FeaturedJobCard } from "@/components/FeaturedJobCard"
 import { Icons } from "@/components/Icons"
 
 export default function Home() {
-  const { scoredJobs, resume, setOpenJob, setModalOpen } = useApp()
-
-  const featured = [...scoredJobs]
-    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-    .slice(0, 6)
+  const { scoredJobs, resume, setOpenJob } = useApp()
 
   const isMatch = resume !== null
+
+  const featured = [...scoredJobs]
+    .filter(item => !isMatch || item.score !== 0)
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+    .slice(0, 6)
 
   return (
     <main>
@@ -35,9 +36,6 @@ export default function Home() {
             <Link href="/jobs" className="btn-primary lg">
               Browse open roles <Icons.arrow />
             </Link>
-            <button className="btn-ghost lg" onClick={() => setModalOpen(true)}>
-              {resume ? "Change resume" : "Upload resume"}
-            </button>
           </div>
           <div className="hero-foot">
             <span>Remote-friendly</span>
@@ -61,10 +59,10 @@ export default function Home() {
             <rect x="56" y="212" width="160" height="8" rx="4" fill="#1C1A17" opacity=".08"/>
             <rect x="56" y="228" width="220" height="8" rx="4" fill="#1C1A17" opacity=".06"/>
             <rect x="56" y="244" width="140" height="8" rx="4" fill="#1C1A17" opacity=".04"/>
-            <circle cx="400" cy="220" r="36" fill="none" stroke="#C2410C" strokeWidth="4" opacity=".2"/>
-            <circle cx="400" cy="220" r="36" fill="none" stroke="#C2410C" strokeWidth="4"
+            <circle cx="400" cy="262" r="36" fill="none" stroke="#C2410C" strokeWidth="4" opacity=".2"/>
+            <circle cx="400" cy="262" r="36" fill="none" stroke="#C2410C" strokeWidth="4"
               strokeDasharray="226" strokeDashoffset="56" strokeLinecap="round" opacity=".8"/>
-            <text x="400" y="225" textAnchor="middle" fontSize="14" fontWeight="600" fill="#1C1A17" opacity=".7">75</text>
+            <text x="400" y="262" textAnchor="middle" fontSize="14" fontWeight="600" fill="#1C1A17" opacity=".7" dominantBaseline="middle">75</text>
           </svg>
           <div className="hero-frame-caption">Matched for you</div>
         </div>
@@ -107,15 +105,12 @@ export default function Home() {
       <section className="bottom-cta page-pad">
         <h2>Ready to do your best work?</h2>
         <p>
-          Upload your resume and we&apos;ll show you every role ranked for your background.
-          It takes 30 seconds.
+          Browse every open role at Decimal. Use the navbar to upload your resume
+          and get every position ranked for your background.
         </p>
         <div className="cta-buttons">
-          <button className="btn-primary lg" onClick={() => setModalOpen(true)}>
-            {resume ? "Change resume" : "Upload your resume"} <Icons.upload />
-          </button>
-          <Link href="/jobs" className="btn-ghost lg">
-            Browse all roles
+          <Link href="/jobs" className="btn-primary lg">
+            Browse all roles <Icons.arrow />
           </Link>
         </div>
       </section>

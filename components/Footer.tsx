@@ -16,16 +16,16 @@ export function Footer() {
           </div>
           <div>
             <h5>Company</h5>
-            <a>About</a>
-            <a>Manifesto</a>
-            <a>Press</a>
-            <a>Contact</a>
+            <a href="#">About</a>
+            <a href="#">Manifesto</a>
+            <a href="#">Press</a>
+            <a href="#">Contact</a>
           </div>
           <div>
             <h5>Trust</h5>
-            <a>Pay transparency</a>
-            <a>Privacy at hire</a>
-            <a>Accessibility</a>
+            <a href="#">Pay transparency</a>
+            <a href="#">Privacy at hire</a>
+            <a href="#">Accessibility</a>
           </div>
         </div>
       </div>

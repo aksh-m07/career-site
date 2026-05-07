@@ -1,116 +1,137 @@
 # Scalability Analysis
 
-This document explains how the matching architecture would evolve across different scale tiers.
+How the matching architecture evolves across scale tiers.
+
+---
 
 ## Current Architecture (Demo)
 
-- **Job data**: Static JSON file (42 jobs), loaded at API request time
-- **Resume parsing**: Claude Haiku — fast, cheap, 1-3 second latency
-- **Job matching**: Two-stage pipeline:
-  1. In-process pre-filter: hard rules remove domain/seniority mismatches (O(n), no API cost)
-  2. Claude Sonnet scores the remaining eligible jobs in a single API call
-- **Deployment**: Vercel serverless functions, no database
+- **Job data**: Static TypeScript seed file (82 jobs across 12 departments), loaded at build time
+- **Resume parsing**: Groq `llama-3.3-70b-versatile` — parses raw text into a structured `CandidateProfile` (title, seniority, domain, skills, years of experience). Ignores student/club titles when inferring seniority.
+- **Matching**: Two-stage pipeline:
+  1. **In-process hard filter** (O(n), zero API cost): removes domain mismatches (clinical vs. technical) and seniority mismatches (VP candidate never sees Intern/Associate/Mid/Senior roles). Score 0 = hidden.
+  2. **Client-side scoring** (`scoreJob`): family overlap (50 pts) + level fit (30 pts) + skills overlap (20 pts). Runs in the browser, no server call.
+- **AI tailoring**: Groq generates 5–7 resume suggestions per job on demand, only when the user clicks the button.
+- **Persistence**: `localStorage` keyed by email — resume and `CandidateProfile` survive page reloads. No database.
+- **Auth**: Name + email stored in `localStorage`. No password, no server session.
+- **Deployment**: Next.js on Vercel, serverless API routes, no database.
 
-This works well up to a few hundred jobs. The bottleneck is the Claude API call, not compute.
+**Bottleneck at this scale**: The Groq API call for resume parsing (< 1 second). Everything else runs in-process.
 
 ---
 
 ## Tier 1: 500 Jobs
 
-**What breaks:** Nothing yet. The current approach handles 500 jobs comfortably.
+**What still works**: Everything. The hard-filter + client-side scoring approach handles 500 jobs in under 5ms in the browser.
 
-**What to watch:** Claude has a context window limit. If job descriptions are long, 500 jobs might overflow a single prompt. Fix: send only the fields Claude needs (title, seniority, domain, requirements, tags) — not full descriptions.
+**What to watch**:
+- Sending 500 full job records to the browser on page load is ~200KB of JSON — acceptable, but worth noting.
+- The AI tailoring call is per-job and already lazy (only fires on user click), so it scales independently.
 
-**Changes:**
-- Slim the Claude payload to essential fields only (already done in the codebase)
-- Add response caching: `hash(profileJson + jobIds[])` → cached scores in Vercel KV. Same candidate re-uploading gets instant results.
+**Changes to make**:
+- Slim the job payload: send only fields needed for display (`id`, `title`, `family`, `level`, `skills`, `blurb`, `location`). Fetch full details only when a job drawer opens.
+- Add response caching for resume parsing: `SHA256(resumeText)` → cached `CandidateProfile` in Vercel KV. Same resume re-uploaded gets instant results.
 
-**Latency target:** < 5 seconds end-to-end.
+**Trade-off**: Lazy-loading job details on drawer open adds a small latency (~100ms) but reduces initial payload by ~60%.
+
+**Latency target**: < 3 seconds end-to-end including parse.
 
 ---
 
 ## Tier 2: 5,000 Jobs
 
-**What breaks:** You can't send 5,000 jobs to Claude in one call. Token cost becomes material. In-process pre-filtering is still fast (O(n) in memory), but you need a database to persist and query jobs.
+**What breaks**:
+- Sending 5,000 jobs to the browser is ~2MB — too slow on mobile.
+- Client-side scoring of 5,000 jobs is still fast (~10ms) but the data transfer is the problem.
+- `localStorage` is limited to ~5MB. At 5,000 jobs, caching scored results becomes risky.
 
-**Architecture changes:**
+**Architecture changes**:
 
-1. **Add a database**: Postgres (via Neon or Supabase) with indexed columns on `domain`, `seniority`, `location`, `remote`. Jobs are stored there instead of a JSON file.
+1. **Add a database**: Postgres (Neon or Supabase) with indexed columns on `family`, `level`, `region`, `remote`. Jobs live in the DB, not a static file.
 
-2. **Server-side pre-filter via SQL**: Before touching Claude, run:
+2. **Paginated API with server-side pre-filter**: The jobs endpoint accepts `family`, `levelMin`, `levelMax`, `search` query params and runs:
    ```sql
    SELECT * FROM jobs
-   WHERE domain = ANY($1)          -- candidate's domain + adjacent domains
-     AND seniority_level BETWEEN $2 AND $3  -- ± 2 levels from candidate
-   LIMIT 100
+   WHERE family = ANY($1)
+     AND level_rank BETWEEN $2 AND $3
+     AND (search_vector @@ plainto_tsquery($4) OR $4 IS NULL)
+   ORDER BY posted_at DESC
+   LIMIT 20 OFFSET $5
    ```
-   This brings the candidate set from 5,000 → ~100 before Claude sees it.
+   The browser only receives 20 jobs at a time.
 
-3. **Async processing with polling**: Resume upload returns immediately with a `jobId`. Client polls `/api/status/:jobId` (or uses SSE) for match results. This decouples upload latency from matching latency.
+3. **Server-side scoring**: Move `scoreJob` logic to the API. Return pre-scored, pre-sorted results. Client renders what it receives — no scoring in the browser.
 
-4. **Caching**: Cache match results by `SHA256(resume_text)` in Redis/Vercel KV with a 1-hour TTL. Identical resumes don't re-invoke Claude.
+4. **Resume persistence moves to DB**: `localStorage` is replaced by a user record in Postgres. The `CandidateProfile` and scores are stored server-side, fetched on login via a session token.
 
-**Latency target:** Upload instant, results in < 8 seconds.
+**Trade-off**: Pagination means the user can't instantly filter client-side — every filter change triggers an API call. Mitigate with debounce (300ms) and optimistic UI.
+
+**Latency target**: < 200ms per page load, < 3 seconds for resume parse + match.
 
 ---
 
 ## Tier 3: 500,000 Jobs
 
-**What breaks:** SQL filters alone aren't sufficient for semantic relevance. "Senior Python Engineer" and "Senior Backend Developer" may be a great match but share no keyword overlap. SQL can't catch this.
+**What breaks**:
+- SQL keyword filters can't find semantic matches. "Senior Python Engineer" and "Senior Backend Developer" share no SQL overlap but are a great fit.
+- Scoring 500K jobs server-side per candidate is too slow and too expensive to run on demand.
 
-**Architecture changes:**
+**Architecture changes**:
 
-1. **Embedding-based retrieval**: Generate a vector embedding for each job description using `text-embedding-3-small` (cheap, ~$0.02/1M tokens). Store in `pgvector` extension on Postgres (or a dedicated vector DB like Pinecone).
+1. **Embedding-based retrieval**: Each job description is embedded offline using a small, cheap model (e.g., `text-embedding-3-small`). Embeddings stored in `pgvector` (Postgres extension) or a dedicated vector DB.
 
-   When a candidate uploads their resume, Claude Haiku extracts the profile → we embed the `summary` field → run cosine similarity search across 500K job embeddings → retrieve top 200 semantically relevant jobs.
+   On resume upload: parse profile → embed the candidate `summary` → cosine similarity search → retrieve top 200 semantically similar jobs → score those 200 with the existing rule-based logic + Groq re-ranking.
 
 2. **Two-stage pipeline**:
-   - Stage 1 (vector search): 500K jobs → top 200 by embedding similarity (~50ms)
-   - Stage 2 (Claude re-ranking): 200 jobs → scored and explained by Claude Sonnet (~3-4s)
+   - Stage 1 (vector search): 500K jobs → top 200 by embedding similarity, filtered by hard domain/seniority rules (~50ms)
+   - Stage 2 (LLM re-ranking): top 200 → Groq scores and explains each (~2–3s)
 
-3. **Job embedding pipeline**: A background worker regenerates embeddings when job descriptions are updated. New jobs are embedded on creation and written to the vector index.
+3. **Offline job enrichment**: A background worker embeds new/updated job descriptions, normalizes seniority labels, and writes to the vector index. Jobs are never re-embedded at query time.
 
-4. **CDN caching**: The job list itself is mostly static. Cache the base job grid at the CDN edge, invalidated on job data changes. Most users see the same uncustomized list — only the personalization layer is dynamic.
+4. **CDN caching for the base job grid**: The unauthenticated job list (sorted by recency, no personalization) is cached at the CDN edge. Only the personalization layer (scores, ordering) is dynamic.
 
-**Trade-off**: Embeddings capture semantic similarity but not seniority logic ("VP-level candidate → junior role is bad") as precisely as a rule. The pre-filter hard rules remain important; embeddings handle the semantic layer.
+**Trade-off**: Embeddings capture semantic similarity but not the hard business rules (VP shouldn't see Intern roles). The domain/seniority hard filters must remain as a pre-gate before embedding search — they're cheap and exact. Embeddings handle the fuzzy relevance layer on top.
 
-**Latency target:** Upload instant, results in < 6 seconds (embedding search is fast).
+**Latency target**: Upload instant (async processing), results in < 5 seconds.
 
 ---
 
 ## Tier 4: 5,000,000 Jobs
 
-**What breaks:** `pgvector` with exact cosine search doesn't scale to 5M vectors with low latency. ANN (approximate nearest neighbor) search becomes necessary. Claude API cost per match is now a significant line item.
+**What breaks**:
+- `pgvector` with exact cosine search doesn't scale past ~1M vectors with sub-100ms p99 latency. Approximate nearest neighbor (ANN) search is required.
+- Groq API cost at scale: if 100K candidates match per day against top-200 jobs each, that's 20M LLM-scored pairs/day. At current pricing this is significant.
 
-**Architecture changes:**
+**Architecture changes**:
 
-1. **Dedicated vector database**: Migrate from `pgvector` to Pinecone, Weaviate, or Qdrant. ANN search retrieves top-K across 5M vectors in < 100ms with p99 SLAs.
+1. **Dedicated vector database**: Migrate from `pgvector` to Pinecone, Weaviate, or Qdrant. ANN search retrieves top-K across 5M vectors in < 100ms with production SLAs.
 
 2. **Horizontal microservices**:
-   - **Resume parsing service**: Stateless. Takes raw text, returns `CandidateProfile`. Scales to zero, handles spikes during peak job fair seasons.
-   - **Job indexing service**: Processes new/updated jobs, generates embeddings, enriches metadata (Claude batch API for bulk enrichment at off-peak hours), writes to vector DB and primary DB.
-   - **Matching service**: `(profile_embedding, hard_filters) → vector_search → rerank → return`. Scales independently.
+   - **Resume parsing service**: Stateless. Accepts raw text, returns `CandidateProfile`. Scales to zero between spikes.
+   - **Job indexing service**: Embeds new/updated jobs, normalizes metadata via Groq batch API (50% cheaper than real-time), writes to vector DB and Postgres.
+   - **Matching service**: `(profile_embedding, hard_filters) → ANN search → rule-based filter → Groq re-rank top 50 → return`. Scales independently.
 
-3. **Cost optimization for Claude**:
-   - At 5M jobs, Claude API is expensive at scale. Use Claude only for the final **re-ranking of top-50** (not all 5M).
-   - Consider distilling Claude's scoring logic into a smaller fine-tuned cross-encoder (e.g., a DistilBERT model fine-tuned on Claude's labeled pairs). Run locally, zero marginal cost.
-   - Use **Claude Batch API** for offline job enrichment (generating tags, normalizing seniority labels) at 50% cost reduction vs. real-time.
+3. **Cost optimization for LLM calls**:
+   - Groq/LLM only sees the **top 50** candidates from ANN search, not all 5M.
+   - Pre-compute match scores for the most common candidate archetypes (e.g., "Senior SWE, eng family, 8 years") and cache them. Many candidates share similar profiles.
+   - Consider distilling the Groq scoring logic into a fine-tuned cross-encoder (small BERT variant) trained on Groq-labeled pairs. Zero marginal cost at inference time.
 
-4. **Feedback loop**: Log every user click (did they apply to a recommended job? did they skip it?). Use this signal to evaluate and improve model quality offline. This is how you know whether the 87% match score is actually a good prediction.
+4. **Feedback loop**: Log every click, application, and skip. Use this signal to evaluate whether high match scores actually predict applications. Retrain/fine-tune the scoring model offline using this data.
 
-5. **Observability**: Every Claude call is logged with latency, token usage, job ID, and candidate profile hash. Dashboards track p50/p95 matching latency, Claude cost per match, and click-through rate on recommended jobs.
+5. **Observability**: Every Groq call logged with latency, token usage, job IDs, candidate profile hash, and match score distribution. Dashboards track p50/p95 latency, cost per match, and click-through rate by score bucket.
 
-**Latency target:** Upload instant, results in < 4 seconds (ANN search is fast; Claude only sees 50 jobs).
+**Latency target**: Upload instant, results in < 4 seconds (ANN is fast; Groq sees ≤ 50 jobs).
 
 ---
 
 ## Trade-off Summary
 
-| Scale | Storage | Pre-filter | AI Matching | Latency | Cost/match |
-|-------|---------|------------|-------------|---------|------------|
-| 500 | JSON file | In-process rules | Claude Sonnet (all jobs) | ~4s | ~$0.01 |
-| 5K | Postgres | SQL query | Claude Sonnet (top 100) | ~6s | ~$0.005 |
-| 500K | Postgres + pgvector | ANN search (top 200) | Claude Sonnet (top 200) | ~5s | ~$0.004 |
-| 5M | Pinecone + Postgres | ANN search (top 50) | Claude Sonnet (top 50) + fine-tuned model | ~4s | ~$0.001 |
+| Scale | Storage | Pre-filter | Scoring | Persistence | Latency | Relative cost/match |
+|---|---|---|---|---|---|---|
+| 82 (now) | Static TS file | In-process rules | Client-side rule engine | localStorage | ~1s parse | ~$0.001 |
+| 500 | Static file + KV cache | In-process rules | Client-side rule engine | localStorage | ~1s | ~$0.0005 |
+| 5K | Postgres | SQL (domain + level) | Server-side rules + Groq top-100 | Postgres (server session) | ~4s | ~$0.003 |
+| 500K | Postgres + pgvector | ANN search top-200 | Rules + Groq top-200 | Postgres | ~5s | ~$0.002 |
+| 5M | Pinecone + Postgres | ANN search top-50 | Rules + Groq top-50 + fine-tuned model | Postgres + Redis | ~4s | ~$0.0003 |
 
-The core insight: **AI is expensive per call, so the goal at every scale tier is to reduce what the AI sees, not remove it**. The pre-filtering layers (hard rules → SQL → vector search) converge on a small candidate set that Claude can evaluate with full reasoning.
+**Core insight**: The LLM is expensive per call. Every scale tier's goal is to shrink what the LLM sees — not replace it. The hard rule pre-filter (domain/seniority exclusion) does the heaviest lifting for free at every tier, because most mismatches are obvious and don't need AI to detect.

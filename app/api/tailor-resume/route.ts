@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
-import Anthropic from "@anthropic-ai/sdk"
+import Groq from "groq-sdk"
 import { z } from "zod"
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const client = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 const RequestSchema = z.object({
   job: z.object({
@@ -30,15 +30,15 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { job, profile } = RequestSchema.parse(body)
 
-    const message = await client.messages.create({
-      model: "claude-haiku-4-5-20251001",
+    const message = await client.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
       max_tokens: 1024,
       messages: [
         {
           role: "user",
-          content: `You are a professional resume coach. A candidate wants to apply for a specific job but their resume doesn't perfectly match.
+          content: `You are a professional resume coach helping a candidate reposition their resume for a role they don't perfectly match yet.
 
-Give them 5-7 SPECIFIC, ACTIONABLE changes they can make to their resume to better target this role. Be concrete — name specific skills, phrases, and bullet point ideas they should add. Do NOT give generic advice.
+Your job is to give 5-7 SPECIFIC, ACTIONABLE changes they can make to their existing resume to maximize their chances. Even if the match is weak, give concrete, useful advice — not "this role isn't for you."
 
 Candidate profile:
 - Current title: ${profile.currentTitle}
@@ -52,22 +52,24 @@ Target role:
 - Required skills: ${job.skills.join(", ")}
 - Role description: ${job.blurb}
 
+Instructions:
+- Name specific skills, keywords, or phrases to add
+- Suggest specific bullet point rewrites that highlight transferable experience
+- Recommend what to emphasize, reorder, or reframe
+- If the gap is large, focus on transferable skills and how to bridge them
+- NEVER say the candidate isn't a fit — assume they want to apply and help them
+
 Return ONLY a JSON array of strings, no other text:
 ["specific suggestion 1", "specific suggestion 2", ...]
 
-Each suggestion should be one concrete action, max 20 words. Examples of good suggestions:
-- "Add 'Kubernetes' and 'container orchestration' to your skills section"
-- "Rewrite your most recent bullet to emphasize system scalability impact"
-- "Include a quantified example of working with distributed systems"`,
+Each item: one concrete action, max 25 words.`,
         },
       ],
     })
 
-    const content = message.content[0]
-    if (content.type !== "text") throw new Error("Unexpected response")
-
-    const jsonMatch = content.text.match(/\[[\s\S]*\]/)
-    if (!jsonMatch) throw new Error("No JSON array found")
+    const text = message.choices[0]?.message?.content ?? ""
+    const jsonMatch = text.match(/\[[\s\S]*\]/)
+    if (!jsonMatch) throw new Error("No JSON array found in: " + text)
 
     const suggestions = JSON.parse(jsonMatch[0]) as string[]
 
