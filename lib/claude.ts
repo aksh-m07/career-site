@@ -1,9 +1,9 @@
-import Groq from "groq-sdk"
+import Anthropic from "@anthropic-ai/sdk"
 import { z } from "zod"
 import type { CandidateProfile, Family, Job, Level } from "./types"
 import { LEVEL_RANK } from "./types"
 
-const getClient = () => new Groq({ apiKey: process.env.GROQ_API_KEY })
+const getClient = () => new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 const FAMILY_GROUPS: Record<string, Family[]> = {
   technical: ["eng", "data", "product", "design"],
@@ -38,8 +38,8 @@ const MatchResultSchema = z.array(
 )
 
 export async function parseResume(resumeText: string): Promise<CandidateProfile> {
-  const completion = await getClient().chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+  const message = await getClient().messages.create({
+    model: "claude-haiku-4-5-20251001",
     max_tokens: 1024,
     messages: [
       {
@@ -71,11 +71,12 @@ ${resumeText}`,
     ],
   })
 
-  const text = completion.choices[0]?.message?.content
-  if (!text) throw new Error("Empty response from Groq")
+  const content = message.content[0]
+  if (content.type !== "text") throw new Error("Unexpected response type from Claude")
+  const text = content.text
 
   const jsonMatch = text.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) throw new Error("No JSON found in Groq response")
+  if (!jsonMatch) throw new Error("No JSON found in Claude response")
 
   const parsed = JSON.parse(jsonMatch[0])
   return CandidateProfileSchema.parse(parsed) as CandidateProfile
@@ -111,8 +112,8 @@ export async function matchJobsToProfile(
     blurb: j.blurb,
   }))
 
-  const completion = await getClient().chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+  const message = await getClient().messages.create({
+    model: "claude-haiku-4-5-20251001",
     max_tokens: 4096,
     messages: [
       {
@@ -134,11 +135,12 @@ Return ONLY a JSON array, no other text:
     ],
   })
 
-  const text = completion.choices[0]?.message?.content
-  if (!text) throw new Error("Empty response from Groq")
+  const content = message.content[0]
+  if (content.type !== "text") throw new Error("Unexpected response type from Claude")
+  const text = content.text
 
   const jsonMatch = text.match(/\[[\s\S]*\]/)
-  if (!jsonMatch) throw new Error("No JSON array in Groq response")
+  if (!jsonMatch) throw new Error("No JSON array in Claude response")
 
   const results = MatchResultSchema.parse(JSON.parse(jsonMatch[0]))
   const scoreMap = new Map(results.map(r => [r.jobId, r]))
