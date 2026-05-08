@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
-import Anthropic from "@anthropic-ai/sdk"
+import Groq from "groq-sdk"
 import { z } from "zod"
 
-const getClient = () => new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const getClient = () => new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 const RequestSchema = z.object({
   job: z.object({
@@ -30,8 +30,8 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { job, profile } = RequestSchema.parse(body)
 
-    const message = await getClient().messages.create({
-      model: "claude-haiku-4-5-20251001",
+    const message = await getClient().chat.completions.create({
+      model: "llama-3.3-70b-versatile",
       max_tokens: 1024,
       messages: [
         {
@@ -67,14 +67,11 @@ Each item: one concrete action, max 25 words.`,
       ],
     })
 
-    const content = message.content[0]
-    if (content.type !== "text") throw new Error("Unexpected response type")
-
-    const jsonMatch = content.text.match(/\[[\s\S]*\]/)
-    if (!jsonMatch) throw new Error("No JSON array found in: " + content.text)
+    const text = message.choices[0]?.message?.content ?? ""
+    const jsonMatch = text.match(/\[[\s\S]*\]/)
+    if (!jsonMatch) throw new Error("No JSON array found in: " + text)
 
     const suggestions = JSON.parse(jsonMatch[0]) as string[]
-
     return NextResponse.json({ suggestions })
   } catch (error) {
     console.error("Tailor resume error:", error)
