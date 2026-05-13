@@ -21,6 +21,7 @@ const RequestSchema = z.object({
     seniorityLevel: z.string(),
     yearsOfExperience: z.number(),
     family: z.string(),
+    specialization: z.string().optional().default(""),
     industries: z.array(z.string()),
   }),
 })
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
 Your job is to give 5-7 SPECIFIC, ACTIONABLE changes they can make to their existing resume to maximize their chances. Even if the match is weak, give concrete, useful advice — not "this role isn't for you."
 
 Candidate profile:
-- Current title: ${profile.currentTitle}
+- Current title: ${profile.currentTitle}${profile.specialization ? ` (${profile.specialization})` : ""}
 - Experience: ${profile.yearsOfExperience} years
 - Skills: ${profile.skills.join(", ")}
 - Summary: ${profile.summary}

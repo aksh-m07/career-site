@@ -86,6 +86,7 @@ export interface CandidateProfile {
   seniorityLevel: Level
   yearsOfExperience: number
   family: Family
+  specialization: string
   skills: string[]
   industries: string[]
   summary: string

@@ -14,6 +14,7 @@ const RequestSchema = z.object({
     seniorityLevel: z.enum(LEVELS),
     yearsOfExperience: z.number(),
     family: z.enum(FAMILIES),
+    specialization: z.string().default(""),
     skills: z.array(z.string()),
     industries: z.array(z.string()),
     summary: z.string(),

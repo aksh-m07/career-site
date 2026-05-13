@@ -45,7 +45,12 @@ export function JobRow({ item, isMatch, onClick }: {
       </div>
       <div className="job-row-aside">
         {score !== null
-          ? <ScoreRing score={score}/>
+          ? (
+            <div className="score-ring-wrap">
+              <ScoreRing score={score}/>
+              <span className="score-out-of">{score}/100</span>
+            </div>
+          )
           : <div className="apply-cue"><span>View role</span> <Icons.arrow/></div>
         }
       </div>
